@@ -1,5 +1,8 @@
 import GUI.Storage;
 import GUI.GUI;
+import GUI.Stor;
+import deprecated.People;
+
 /**
  * Created by slavik on 30.10.16.
  */
@@ -19,4 +22,15 @@ public class lab5 {
 
         new Thread(new GUI(args.length==0?null:args[0])).start();
     }
+
+    public void testStore(){
+        Stor<People> stor = new Stor<People>();
+        stor.add(new People());
+        stor.remove(new People());
+        stor.get(new People());
+        for(People p : stor) {
+
+        }
+    }
+
 }

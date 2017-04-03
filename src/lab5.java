@@ -1,22 +1,30 @@
-import GUI.Storage;
-import GUI.GUI;
+import GUI.*;
+
+import javafx.application.Application;
+import javafx.stage.Stage;
+
 /**
  * Created by slavik on 30.10.16.
  */
 
-public class lab5 {
+public class lab5 extends Application {
     public static void main(String[] args) {
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            @Override
-            public void run() {
-                try {
-                    Storage.getInstanceOf().saveStorage();
-                } catch (NullPointerException ex) {
-                    System.out.println("Коллекция пуста, нечего сохранять в файл.");
-                }
-            }
-        });
-
-        new Thread(new GUI(args.length==0?null:args[0])).start();
+        launch(args);
+//        new Thread(new GUI(args.length == 0 ? null : args[0])).start();
     }
+
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+
+        RegisterWindow registerWindow = new RegisterWindow(primaryStage);
+        registerWindow.showRegisterWindow();
+
+
+//        MainWindow workWithCollection = new MainWindow();
+//        workWithCollection.getRegisterWindow(primaryStage);
+
+//        workWithCollection.mainWindow();
+
+    }
+
 }

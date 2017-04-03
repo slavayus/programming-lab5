@@ -1,9 +1,9 @@
 package deprecated;
 
-import GUI.Botherable;
-import GUI.Chatable;
-import GUI.Man;
-import GUI.Missable;
+import old.school.Botherable;
+import old.school.Chatable;
+import old.school.Man;
+import old.school.Missable;
 
 import java.util.ArrayList;
 import java.util.List;

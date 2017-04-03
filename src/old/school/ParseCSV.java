@@ -1,5 +1,6 @@
-package GUI;
+package old.school;
 
+import GUI.Storage;
 import deprecated.People;
 
 import java.io.*;

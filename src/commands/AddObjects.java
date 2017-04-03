@@ -11,6 +11,10 @@ import java.util.Map;
 import GUI.*;
 import com.google.gson.reflect.TypeToken;
 import deprecated.People;
+import old.school.Botherable;
+import old.school.Chatable;
+import old.school.InterfaceAdapter;
+import old.school.Missable;
 
 /**
  * Created by slavik on 22.02.17.

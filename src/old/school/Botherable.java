@@ -1,4 +1,4 @@
-package GUI;
+package old.school;
 
 /**
  * Created by slavik on 02.12.16.

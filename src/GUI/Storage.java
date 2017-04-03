@@ -7,6 +7,10 @@ import com.google.gson.reflect.TypeToken;
 import deprecated.Food;
 import deprecated.People;
 import deprecated.Place;
+import old.school.Botherable;
+import old.school.Chatable;
+import old.school.InterfaceAdapter;
+import old.school.Missable;
 
 import java.io.*;
 import java.lang.reflect.Type;

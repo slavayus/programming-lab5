@@ -16,8 +16,8 @@ public class lab5 extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
 
-        RegisterWindow registerWindow = new RegisterWindow(primaryStage);
-        registerWindow.showRegisterWindow();
+        /*RegisterWindow registerWindow = */new Thread(new RegisterWindow(primaryStage)).run();
+//        registerWindow.showRegisterWindow();
 
 
 //        MainWindow workWithCollection = new MainWindow();

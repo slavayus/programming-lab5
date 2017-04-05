@@ -21,7 +21,7 @@ import javax.swing.plaf.nimbus.State;
 /**
  * Created by slavik on 02.04.17.
  */
-public class RegisterWindow {
+public class RegisterWindow implements Runnable {
 
     private PasswordField userPasswordField;
     private Stage primaryStage;
@@ -30,7 +30,7 @@ public class RegisterWindow {
         this.primaryStage = primaryStage;
     }
 
-    public void showRegisterWindow() {
+    public void run() {
         HBox rootHBox = new HBox();
         rootHBox.setAlignment(Pos.CENTER);
         rootHBox.setStyle("-fx-background-color: #3FF4CB;");

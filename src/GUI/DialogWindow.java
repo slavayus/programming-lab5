@@ -24,6 +24,7 @@ public class DialogWindow implements Runnable {
     @Override
     public void run() {
         buttonOKListener();
+        dialogStage.setTitle("Ha, ha humor");
         dialogStage.centerOnScreen();
         dialogStage.setScene(new Scene(new VBox(getMessageLabel(), getButtonOK()), 300, 100));
         dialogStage.toFront();

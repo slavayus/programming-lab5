@@ -31,7 +31,9 @@ public class AddObjects {
      * @param object Экземплят типа {@link People} для добавления в коллекцию.
      * @version 2.0
      */
-    public static void addIfMax(String object) {
+    public static void addIfMax() {
+        //need to correct
+        String object = "";
         try {
             People people = gson.fromJson(object, People.class);
             if (people == null) {
@@ -66,7 +68,9 @@ public class AddObjects {
      * @param object Ожидается конкретный экземпляр класса {@link People}
      * @version 2.0
      */
-    public static void addIfMin(String object) {
+    public static void addIfMin() {
+        //need to correct
+        String object = "";
         try {
             People people = gson.fromJson(object, People.class);
             if (people == null) {
@@ -101,7 +105,9 @@ public class AddObjects {
      * @param path Ожидатеся имя файла или путь к файлу, содержащий коллекцию {@link Storage#family}
      * @version 2.0
      */
-    public static void importAllFromFile(String path) {
+    public static void importAllFromFile() {
+        //need to correct
+        String path = "";
         GsonBuilder builder = new GsonBuilder();
         builder.registerTypeAdapter(Missable.class, new InterfaceAdapter<People>());
         builder.registerTypeAdapter(Chatable.class, new InterfaceAdapter<People>());
@@ -155,7 +161,9 @@ public class AddObjects {
      * @param string Экземплят типа {@link People} для добавления в коллекцию.
      * @version 2.0
      */
-    public static void insetNewObject(String string) {
+    public static void insertNewObject() {
+        //need to correct
+        String string = "";
         boolean flag = true;
         String object = null,key = null;
         try {

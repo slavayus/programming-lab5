@@ -5,13 +5,14 @@ import old.school.Chatable;
 import old.school.Man;
 import old.school.Missable;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by slavik on 30.10.16.
  */
-public class People extends Man implements Botherable, Missable, Chatable,Comparable{
+public class People extends Man implements Botherable, Missable, Chatable,Comparable, Serializable{
     private List<Missable> miss = new ArrayList<>();
     private List<Botherable> bother = new ArrayList<>();
     private List<Chatable> chat = new ArrayList<>();

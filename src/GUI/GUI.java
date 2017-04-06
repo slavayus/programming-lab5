@@ -4,6 +4,7 @@ import old.school.ParseCSV;
 
 import static commands.RemoveObject.*;
 import static commands.AddObjects.*;
+import static commands.OtherMethods.*;
 import java.io.*;
 import java.util.*;
 
@@ -90,11 +91,11 @@ public class GUI implements Runnable {
                     break;
                 }
                 case "remove_greater_key": {
-                    removeGreaterKey(object);
+//                    removeGreaterKey();
                     break;
                 }
                 case "add_if_max": {
-                    addIfMax(object);
+                    addIfMax();
                     break;
                 }
                 case "save": {
@@ -102,15 +103,15 @@ public class GUI implements Runnable {
                     break;
                 }
                 case "remove_lower": {
-                    removeLower(object);
+                    removeLower();
                     break;
                 }
                 case "insert": {
-                    insetNewObject(object);
+                    insertNewObject();
                     break;
                 }
                 case "remove_greater": {
-                    removeGreater(object);
+                    removeGreater();
                     break;
                 }
                 case "load": {
@@ -122,15 +123,15 @@ public class GUI implements Runnable {
                     break;
                 }
                 case "remove_all": {
-                    removeAll(object);
+                    removeAll();
                     break;
                 }
                 case "remove": {
-                    removeWithKey(object);
+                    removeWithKey();
                     break;
                 }
                 case "import": {
-                    importAllFromFile(object);
+                    importAllFromFile();
                     break;
                 }
                 case "clear": {
@@ -138,7 +139,7 @@ public class GUI implements Runnable {
                     break;
                 }
                 case "add_if_min": {
-                    addIfMin(object);
+                    addIfMin();
                     break;
                 }
                 case "show_state": {
@@ -208,26 +209,5 @@ public class GUI implements Runnable {
 //        }
 
 
-    }
-
-    /**
-     * Команда: info.
-     * Выводит основную информацию о классе Storage.
-     *
-     * @param currentDate На вход ожидается дата заполнения коллекции {@link Storage#family}
-     * @since 1.0
-     */
-    private void writeInfo(Date currentDate) {
-        Class cl = Storage.getInstanceOf().getFamily().getClass();
-        printWriter.println("Имя коллекции - " + cl.getCanonicalName());
-        printWriter.println("Дата инициализации - " + currentDate);
-        printWriter.println("Количество элемнтов - " + Storage.getInstanceOf().getFamily().size());
-        printWriter.println("Пакет - " + cl.getPackage());
-        printWriter.println("Имя родительсокго класса - " + cl.getSuperclass().getName());
-        printWriter.println("Интерфейсы: ");
-        Class[] interfaces = cl.getInterfaces();
-        for (Class c : interfaces) {
-            printWriter.println(c.getName());
-        }
     }
 }

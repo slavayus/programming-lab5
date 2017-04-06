@@ -76,7 +76,6 @@ public class RegisterWindow implements Runnable {
                 });
     }
 
-
     private HBox showUserPasswordHBox() {
         HBox userPasswordHBox = new HBox();
         userPasswordHBox.setPadding(new Insets(10, 10, 15, 35));

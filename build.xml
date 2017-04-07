@@ -1,0 +1,40 @@
+<project name="AntBuild" default="compile">
+
+    <property name="dir.lib" value="lib"/>
+
+    <property name="dir.build" value="buid"/>
+
+    <property name="dir.classes" value="${dir.build}/classes"/>
+
+    <property name="dir.bin" value="${dir.build}/bin"/>
+
+
+    <path id="libs">
+        <fileset dir="${dir.lib}">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+
+
+
+    <target name="clear">
+        <delete dir="build"/>
+    </target>
+
+
+    <target name="makeDirs" depends="clear">
+        <mkdir dir="${dir.classes}"/>
+        <mkdir dir="${dir.bin}"/>
+    </target>
+
+
+    <target name="compile" depends="makeDirs">
+        <javac srcdir="src" destdir="${dir.classes}" includeantruntime="false">
+            <classpath>
+                <path refid="libs"/>
+            </classpath>
+        </javac>
+    </target>
+
+
+</project>

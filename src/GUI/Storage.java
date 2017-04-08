@@ -69,77 +69,51 @@ public class Storage {
         }
 
         x.setName("Малыш");
-        x.setAge(7);
+        x.setAge((byte) 7);
         places.get(0).setFull(x);
         family.put("0", x);
 
         x = new People();
         x.setName("мама");
-        x.setAge(31);
+        x.setAge((byte) 31);
         places.get(1).setFull(x);
         family.put("1", x);
         familyOfChild.put(0, x);
 
         x = new People();
         x.setName("Папа");
-        x.setAge(32);
+        x.setAge((byte) 32);
         places.get(2).setFull(x);
         family.put("2", x);
         familyOfChild.put(1, x);
 
         x = new People();
         x.setName("Босс");
-        x.setAge(23);
+        x.setAge((byte) 23);
         places.get(3).setFull(x);
         family.put("3", x);
         familyOfChild.put(2, x);
 
         x = new People();
         x.setName("Бетан");
-        x.setAge(26);
+        x.setAge((byte) 26);
         places.get(4).setFull(x);
         family.put("4", x);
         familyOfChild.put(3, x);
 
         x = new People();
         x.setName("Бок");
-        x.setAge(38);
+        x.setAge((byte) 38);
         places.get(5).setFull(x);
         family.put("5", x);
 
         x = new People();
         x.setName("Фрид");
-        x.setAge(45);
+        x.setAge((byte) 45);
         places.get(6).setFull(x);
         family.put("6", x);
 
         System.out.println("Данные загружены");
-//        atTable.add(family.get(0));
-
-//        atTable.add(family.get(5));
-//        atTable.add(family.get(1));
-//        atTable.add(family.get(2));
-//        atTable.add(family.get(4));
-//        atTable.add(family.get(3));
-
-
-//        Map<Integer, People> familyClone = new LinkedHashMap<>(family);
-//
-//        for (int i = 0; i < atTable.size(); i++) {
-//            familyClone.remove(i);
-//        }
-//        familyClone.remove(6);
-//        for (People people : familyClone.values()) {
-//            family.get(0).setMiss(people);
-//        }
-//
-//        x = family.get(0);
-//        x.setBother(family.get(6));
-//
-//        x = family.get(5);
-//        x.setChat(family.get(6));
-//
-////        writeMessage();
     }
 
 

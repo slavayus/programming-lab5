@@ -1,8 +1,8 @@
-<project name="AntBuild" default="compile">
+<project name="AntBuild" default="test">
 
     <property name="dir.lib" value="lib"/>
 
-    <property name="dir.build" value="buid"/>
+    <property name="dir.build" value="build"/>
 
     <property name="dir.classes" value="${dir.build}/classes"/>
 
@@ -17,12 +17,12 @@
 
 
 
-    <target name="clear">
+    <target name="deleteOldBuild">
         <delete dir="build"/>
     </target>
 
 
-    <target name="makeDirs" depends="clear">
+    <target name="makeDirs" depends="deleteOldBuild">
         <mkdir dir="${dir.classes}"/>
         <mkdir dir="${dir.bin}"/>
     </target>
@@ -36,5 +36,46 @@
         </javac>
     </target>
 
+    <target name="run" depends="build">
+        <copy file="help" todir="${dir.bin}"/>
+        <copy file="objects" todir="${dir.bin}"/>
+    </target>
 
+    <target name="build" depends="compile">
+        <jar destfile="${dir.bin}/AntBuild.jar" basedir="${dir.classes}">
+            <zipfileset src="${dir.lib}/gson-2.8.0.jar"/>
+            <zipfileset src="${dir.lib}/junit-4.12.jar"/>
+            <manifest>
+                <attribute name="Main-Class" value="lab5"/>
+                <attribute name="Specification-version" value="1.0"/>
+            </manifest>
+        </jar>
+    </target>
+
+
+    <target name="clean">
+        <delete>
+            <fileset dir="${dir.classes}"/>
+        </delete>
+    </target>
+
+
+    <target name="test" depends="compile">
+        <junit fork = "yes" showoutput="true" printsummary="on" haltonfailure="no">
+            <test name="test.GUI.ManTest"/>
+            <test name="test.GUI.ParseCSVTest"/>
+            <classpath>
+                <path refid="libs"/>
+                <pathelement location="${dir.classes}"/>
+            </classpath>
+        </junit>
+    </target>
+
+
+    <xmlvalidate failonerror = "no" lenient = "yes" warn = "yes">
+        <fileset dir = "./" includes = "*.xml"/>
+    </xmlvalidate>
+
+
+    
 </project>

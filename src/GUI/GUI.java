@@ -191,21 +191,6 @@ public class GUI implements Runnable {
         } catch (IOException e) {
             System.out.println("Проверьте корректность файла");
         }
-
-
-//            ResultSet resultSet = new ConnectDB().readDataFromDB();
-//            while (resultSet.next()) {
-//                System.out.print(resultSet.getString(1));
-//                for (int i = resultSet.getString(1).length(); i < 15; i++)
-//                    System.out.print(" ");
-//                System.out.println(resultSet.getString(2));
-//            }
-//        } catch (SQLException e) {
-//            System.out.println("Соединение с базой разорвано.");
-//            Thread.interrupted();
-//        }
-
-
     }
 
     /**

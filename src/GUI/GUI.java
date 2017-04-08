@@ -95,7 +95,6 @@ public class GUI implements Runnable {
                     break;
                 }
                 case "add_if_max": {
-                    addIfMax();
                     break;
                 }
                 case "save": {
@@ -106,7 +105,6 @@ public class GUI implements Runnable {
                     break;
                 }
                 case "insert": {
-                    insertNewObject();
                     break;
                 }
                 case "remove_greater": {
@@ -127,7 +125,6 @@ public class GUI implements Runnable {
                     break;
                 }
                 case "import": {
-                    importAllFromFile();
                     break;
                 }
                 case "clear": {
@@ -135,7 +132,6 @@ public class GUI implements Runnable {
                     break;
                 }
                 case "add_if_min": {
-                    addIfMin();
                     break;
                 }
                 case "show_state": {

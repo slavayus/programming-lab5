@@ -21,14 +21,6 @@ import javafx.stage.Stage;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import static javafx.scene.layout.Region.USE_COMPUTED_SIZE;
-
 
 /**
  * Created by slavik on 01.04.17.
@@ -37,6 +29,9 @@ public class MainWindow implements Runnable {
     private Stage mainWindow = new Stage();
     private TreeView<String> peopleTree;
     private RemoveObject removeObject = new RemoveObject();
+    private AddObjects addObjects = new AddObjects();
+    private ImportObjects importObjects = new ImportObjects();
+
 
     @Override
     public void run() {
@@ -197,7 +192,6 @@ public class MainWindow implements Runnable {
             method.replace(0, 1, method.substring(0, 1).toLowerCase());
 
 
-//            System.out.println(className);
 
             while (method.indexOf(" ") != -1) {
                 int start = method.indexOf(" ") + 1;
@@ -211,32 +205,43 @@ public class MainWindow implements Runnable {
             switch (className) {
                 case "Remove": {
                     try {
-                        RemoveObject.class.getMethod(String.valueOf(method),peopleTree.getClass()).invoke(removeObject,peopleTree);
+                        RemoveObject.class.getMethod(String.valueOf(method), peopleTree.getClass()).invoke(removeObject, peopleTree);
                     } catch (NoSuchMethodException e) {
                         System.out.println("Method not found");
                     } catch (IllegalAccessException | InvocationTargetException e) {
                         System.out.println(e.getMessage());
                     }
-                break;
-            }
-            case "Add":
-            case "Insert":
-            case "Import": {
-                try {
-                    AddObjects.class.getMethod(String.valueOf(method));
-                } catch (NoSuchMethodException e) {
-                    System.out.println("Method not found");
+                    break;
                 }
-                break;
-            }
-            default: {
-                try {
-                    OtherMethods.class.getMethod(String.valueOf(method));
-                } catch (NoSuchMethodException e) {
-                    System.out.println("Method not found");
+                case "Add":
+                case "Insert": {
+                    try {
+                        AddObjects.class.getMethod(String.valueOf(method), peopleTree.getClass()).invoke(addObjects, peopleTree);
+                    } catch (NoSuchMethodException e) {
+                        System.out.println("Method not found");
+                    } catch (IllegalAccessException | InvocationTargetException e) {
+                        System.out.println(e.getMessage());
+                    }
+                    break;
+                }
+                case "Import": {
+                    try {
+                        ImportObjects.class.getMethod(String.valueOf(method), peopleTree.getClass()).invoke(importObjects, peopleTree);
+                    } catch (NoSuchMethodException e) {
+                        System.out.println("Method not found");
+                    } catch (IllegalAccessException | InvocationTargetException e) {
+                        System.out.println(e.getMessage());
+                    }
+                    break;
+                }
+                default: {
+                    try {
+                        OtherMethods.class.getMethod(String.valueOf(method));
+                    } catch (NoSuchMethodException e) {
+                        System.out.println("Method not found");
+                    }
                 }
             }
-        }
-    });
-}
+        });
+    }
 }

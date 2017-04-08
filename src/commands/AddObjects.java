@@ -11,6 +11,19 @@ import java.util.Map;
 import GUI.*;
 import com.google.gson.reflect.TypeToken;
 import deprecated.People;
+import javafx.geometry.Insets;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.control.TreeView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import old.school.Botherable;
 import old.school.Chatable;
 import old.school.InterfaceAdapter;
@@ -23,41 +36,23 @@ import old.school.Missable;
 public class AddObjects {
     private static Gson gson = new GsonBuilder().create();
     private static PrintWriter printWriter = new PrintWriter(System.out, true);
+    private Stage dataStage = null;
+    private People people;
+
 
     /**
      * Команда: add_if_max.
      * Добавляет новый элемент в коллекцию, если его значение превышает значение наибольшего элемента этой коллекции.
      *
-     * @param object Экземплят типа {@link People} для добавления в коллекцию.
+     * @param object     Экземплят типа {@link People} для добавления в коллекцию.
+     * @param peopleTree
      * @version 2.0
      */
-    public static void addIfMax() {
-        //need to correct
-        String object = "";
-        try {
-            People people = gson.fromJson(object, People.class);
-            if (people == null) {
-                throw new NullPointerException();
-            }
-            boolean flag = true;
-            for (People peopleCollection : Storage.getInstanceOf().getFamily().values()) {
-                if (peopleCollection.getAge() > people.getAge()) {
-                    flag = false;
-                    break;
-                }
-            }
-
-            if (flag) {
-                Storage.getInstanceOf().getFamily().put(String.valueOf(Storage.getInstanceOf().getFamily().size()), people);
-                printWriter.println("Объект успешно добавлен");
-            } else {
-                System.out.println("Объект не добавлен");
-            }
-        } catch (JsonSyntaxException ex) {
-            printWriter.println("Не удалось распознать объект, проверьте корректность данных");
-            printWriter.println(ex.getCause());
-        } catch (NullPointerException ex) {
-            printWriter.println("Не ввели данные об объекте");
+    public void addIfMax(TreeView<String> peopleTree) {
+        if (dataStage == null) {
+            readDataFromTextField(1, peopleTree);
+        } else {
+            dataStage.toFront();
         }
     }
 
@@ -65,92 +60,15 @@ public class AddObjects {
      * Команда add_if_min.
      * Добавляет новый элемент в коллекцию, если его значение меньше, чем у наименьшего элемента этой коллекции.
      *
-     * @param object Ожидается конкретный экземпляр класса {@link People}
+     * @param object     Ожидается конкретный экземпляр класса {@link People}
+     * @param peopleTree
      * @version 2.0
      */
-    public static void addIfMin() {
-        //need to correct
-        String object = "";
-        try {
-            People people = gson.fromJson(object, People.class);
-            if (people == null) {
-                throw new NullPointerException();
-            }
-            boolean flag = true;
-            for (People peopleCollection : Storage.getInstanceOf().getFamily().values()) {
-                if (peopleCollection.getAge() < people.getAge()) {
-                    flag = false;
-                    break;
-                }
-            }
-
-            if (flag) {
-                Storage.getInstanceOf().getFamily().put(String.valueOf(Storage.getInstanceOf().getFamily().size()), people);
-                printWriter.println("Объект успешно добавлен");
-            } else {
-                System.out.println("Объект не добавлен");
-            }
-        } catch (JsonSyntaxException ex) {
-            printWriter.println("Не удалось распознать объект, проверьте корректность данных");
-            printWriter.println(ex.getCause());
-        } catch (NullPointerException ex) {
-            printWriter.println("Не ввели данные об объекте");
-        }
-    }
-
-    /**
-     * Команда import.
-     * добавляет в коллекцию все данные из файла.
-     *
-     * @param path Ожидатеся имя файла или путь к файлу, содержащий коллекцию {@link Storage#family}
-     * @version 2.0
-     */
-    public static void importAllFromFile() {
-        //need to correct
-        String path = "";
-        GsonBuilder builder = new GsonBuilder();
-        builder.registerTypeAdapter(Missable.class, new InterfaceAdapter<People>());
-        builder.registerTypeAdapter(Chatable.class, new InterfaceAdapter<People>());
-        builder.registerTypeAdapter(Botherable.class, new InterfaceAdapter<People>());
-        Gson gson = builder.create();
-        boolean flag = true;
-        try {
-            int first = path.indexOf('{');
-            if (first < 0)
-                throw new NullPointerException();
-            int last = ++first;
-            while (path.charAt(last) != '}') {
-                last++;
-            }
-            path = path.substring(first, last);
-        } catch (NullPointerException | IndexOutOfBoundsException e) {
-            printWriter.println("Ошибка в имени файла");
-            flag = false;
-        }
-
-        if (flag) {
-            try (FileReader reader = new FileReader(path)) {
-                int c;
-                String string = "";
-                while ((c = reader.read()) != -1) {
-                    string = string + (char) c;
-                }
-
-                int size = Storage.getInstanceOf().getFamily().size();
-                Type typeMap = new TypeToken<Map<String, People>>() {
-                }.getType();
-                Storage.getInstanceOf().getFamily().putAll(gson.fromJson(string, typeMap));
-                printWriter.printf("%d объекта считано с файла 'objects'\n", Storage.getInstanceOf().getFamily().size() - size);
-            } catch (JsonSyntaxException e) {
-                printWriter.println("Не удалось распознать объект, проверьте корректность данных");
-                printWriter.println(e.getCause());
-            } catch (FileNotFoundException ex) {
-                System.out.println("Файл не найден");
-            } catch (IOException | IndexOutOfBoundsException ex) {
-                printWriter.println("Произошла ошибка при чтении файла");
-            } catch (NullPointerException ex) {
-                printWriter.println("Произошла ошибка, возможно файл пуст");
-            }
+    public void addIfMin(TreeView<String> peopleTree) {
+        if (dataStage == null) {
+            readDataFromTextField(2, peopleTree);
+        } else {
+            dataStage.toFront();
         }
     }
 
@@ -161,11 +79,10 @@ public class AddObjects {
      * @param string Экземплят типа {@link People} для добавления в коллекцию.
      * @version 2.0
      */
-    public static void insertNewObject() {
-        //need to correct
-        String string = "";
+    public void insertNewObject(TreeView<String> peopleTree) {
         boolean flag = true;
-        String object = null,key = null;
+        String string = "";
+        String object = null, key = null;
         try {
             key = string.substring(string.indexOf('{') + 1, string.indexOf('}'));
             int first = string.indexOf('}') + 2;
@@ -173,17 +90,17 @@ public class AddObjects {
             while (string.charAt(last) != '}') {
                 last++;
             }
-            object = string.substring(first-1, last+1);
-            object.trim();
-        }catch (IndexOutOfBoundsException ex){
+            object = string.substring(first - 1, last + 1);
+            object = object.trim();
+        } catch (IndexOutOfBoundsException ex) {
             System.out.println("Не правильно введены данные об объекте");
             flag = false;
-        }catch (NullPointerException ex){
+        } catch (NullPointerException ex) {
             System.out.println("Введите данные об объекте");
             flag = false;
         }
 
-        if(flag){
+        if (flag) {
             try {
                 People people = gson.fromJson(object, People.class);
                 if (people == null) {
@@ -191,7 +108,7 @@ public class AddObjects {
                 }
                 Storage.getInstanceOf().getFamily().put(key, people);
                 printWriter.println("Объект успешно добавлен");
-            }catch (NullPointerException ex){
+            } catch (NullPointerException ex) {
                 printWriter.println("Не ввели данные об объекте");
             } catch (JsonSyntaxException ex) {
                 printWriter.println("Не удалось распознать объект, проверьте корректность данных");
@@ -199,5 +116,100 @@ public class AddObjects {
             }
         }
 
+    }
+
+    private void readDataFromTextField(int min, TreeView<String> peopleTree) {
+        dataStage = new Stage();
+
+
+        Label keyLabel = new Label("Please, enter Object");
+        keyLabel.setFont(Font.font("Helvetica", FontWeight.LIGHT, 16));
+
+        TextField keyTextField = new TextField();
+        keyTextField.setPromptText("Object");
+
+
+        Button buttonOK = new Button("OK");
+        HBox buttonOKHBox = new HBox(buttonOK);
+        buttonOKHBox.setPadding(new Insets(0, 18, 0, 245));
+
+        buttonOK.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                addToCollection(min, peopleTree, keyTextField);
+            }
+        });
+
+        buttonOK.setOnMouseClicked(event -> {
+            addToCollection(min, peopleTree, keyTextField);
+        });
+
+        VBox enterKeyVBox = new VBox(keyLabel, keyTextField, buttonOKHBox);
+        enterKeyVBox.setSpacing(5);
+
+        dataStage.setTitle("Object");
+        dataStage.centerOnScreen();
+        dataStage.setScene(new Scene(enterKeyVBox, 300, 90));
+        dataStage.toFront();
+        dataStage.setMaximized(false);
+        dataStage.setResizable(false);
+        dataStage.show();
+        dataStage.setOnCloseRequest(event -> dataStage = null);
+    }
+
+    private void addToCollection(int min, TreeView<String> peopleTree, TextField keyTextField) {
+        String data = keyTextField.getText();
+        try {
+            People people = gson.fromJson(data, People.class);
+            if (people == null) {
+                throw new NullPointerException();
+            }
+
+            boolean flag = true;
+
+            switch (min) {
+                case 1:
+                    for (People peopleCollection : Storage.getInstanceOf().getFamily().values()) {
+                        if (peopleCollection.getAge() > people.getAge()) {
+                            flag = false;
+                            break;
+                        }
+                    }
+                    break;
+                case 2:
+                    for (People peopleCollection : Storage.getInstanceOf().getFamily().values()) {
+                        if (peopleCollection.getAge() < people.getAge()) {
+                            flag = false;
+                            break;
+                        }
+                    }
+                    break;
+            }
+
+
+            if (flag) {
+                switch (min) {
+                    case 1: {
+                        Storage.getInstanceOf().getFamily().put(String.valueOf(Storage.getInstanceOf().getFamily().size()), people);
+                        break;
+                    }
+                    case 2: {
+                        Storage.getInstanceOf().getFamily().put(String.valueOf(Storage.getInstanceOf().getFamily().size()), people);
+                    }
+                }
+
+                printWriter.println("Объект успешно добавлен");
+            } else {
+                System.out.println("Объект не добавлен");
+            }
+        } catch (JsonSyntaxException ex) {
+            printWriter.println("Не удалось распознать объект, проверьте корректность данных");
+            printWriter.println(ex.getCause());
+        } catch (NullPointerException ex) {
+            printWriter.println("Не ввели данные об объекте");
+        }
+
+        peopleTree.setRoot(MainWindow.getTreeForPeople());
+        dataStage.close();
+        dataStage = null;
     }
 }

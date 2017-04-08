@@ -154,9 +154,7 @@ public class RemoveObject {
             }
         });
 
-        buttonOK.setOnMouseClicked(event -> {
-            removeFromCollection(predicate, peopleTree, keyTextField);
-        });
+        buttonOK.setOnMouseClicked(event -> removeFromCollection(predicate, peopleTree, keyTextField));
 
         VBox enterKeyVBox = new VBox(keyLabel, keyTextField, buttonOKHBox);
         enterKeyVBox.setSpacing(5);

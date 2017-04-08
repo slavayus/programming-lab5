@@ -12,19 +12,26 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
-/**
- * Created by slavik on 03.04.17.
- */
-public class DialogWindow implements Runnable, ButtonOKListener{
+import java.io.File;
 
+/**
+ * Created by slavik on 08.04.17.
+ */
+public class ReportWindow implements Runnable, ButtonOKListener {
+    private String title;
+    private String message;
     private Stage dialogStage = new Stage();
     private Button buttonOK = new Button("OK");
 
 
+    ReportWindow(String title, String message) {
+        this.title = title;
+        this.message = message;
+    }
+
     @Override
     public void run() {
-        buttonOKListener();
-        dialogStage.setTitle("Ha, ha humor");
+        dialogStage.setTitle(title);
         dialogStage.centerOnScreen();
         dialogStage.setScene(new Scene(new VBox(getMessageLabel(), getButtonOK()), 300, 100));
         dialogStage.toFront();
@@ -33,26 +40,24 @@ public class DialogWindow implements Runnable, ButtonOKListener{
         dialogStage.show();
     }
 
-
+    @Override
     public void buttonOKListener() {
         buttonOK.setOnKeyPressed(keyEvent -> {
             if (keyEvent.getCode() == KeyCode.ENTER) {
                 dialogStage.close();
-                new MainWindow().run();
             }
         });
 
-        buttonOK.setOnMouseClicked(event -> {
-            dialogStage.close();
-            new MainWindow().run();
-        });
+        buttonOK.setOnMouseClicked(event ->dialogStage.close());
     }
 
     private Label getMessageLabel() {
-        Label messageLabel = new Label("Да шучу я, нет никакой авторизации.");
-        messageLabel.setFont(Font.font("Liberation Serif", FontWeight.LIGHT, 16));
+        Label messageLabel = new Label(message);
+        messageLabel.setFont(Font.font("Liberation Serif", FontWeight.LIGHT, 14));
+//        messageLabel.setTextAlignment(Pos.CENTER);
+        messageLabel.setCenterShape(true);
         messageLabel.setAlignment(Pos.CENTER);
-        messageLabel.setPadding(new Insets(32, 0, 0, 20));
+        messageLabel.setPadding(new Insets(20, 0, 0, 20));
 
         return messageLabel;
     }
@@ -60,8 +65,10 @@ public class DialogWindow implements Runnable, ButtonOKListener{
     private HBox getButtonOK() {
         HBox buttonOKHBox = new HBox(buttonOK);
         buttonOKHBox.setPadding(new Insets(10, 18, 0, 245));
+        buttonOKListener();
 
         return buttonOKHBox;
     }
+
 
 }

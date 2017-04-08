@@ -103,7 +103,6 @@ public class GUI implements Runnable {
                     break;
                 }
                 case "remove_lower": {
-                    removeLower();
                     break;
                 }
                 case "insert": {
@@ -111,7 +110,6 @@ public class GUI implements Runnable {
                     break;
                 }
                 case "remove_greater": {
-                    removeGreater();
                     break;
                 }
                 case "load": {
@@ -123,11 +121,9 @@ public class GUI implements Runnable {
                     break;
                 }
                 case "remove_all": {
-                    removeAll();
                     break;
                 }
                 case "remove": {
-                    removeWithKey();
                     break;
                 }
                 case "import": {

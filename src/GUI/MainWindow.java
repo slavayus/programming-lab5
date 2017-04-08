@@ -35,15 +35,20 @@ import static javafx.scene.layout.Region.USE_COMPUTED_SIZE;
  */
 public class MainWindow implements Runnable {
     private Stage mainWindow = new Stage();
-    private TreeView<String> peopleTree = new TreeView<>();
+    private TreeView<String> peopleTree;
+    private RemoveObject removeObject = new RemoveObject();
 
     @Override
     public void run() {
+        Storage.setInstanceOf(new Storage());
+        Storage.getInstanceOf().loadDefaultObjects();
+
+        peopleTree = new TreeView<>(getTreeForPeople());
         peopleTree.setPrefWidth(10000);
         peopleTree.setStyle("-fx-background-color: #000000");
+//        peopleTree.setShowRoot(false);
 
-
-        HBox listViewHBox = new HBox(getAnchorPaneForListView(), getTreeForPeople());
+        HBox listViewHBox = new HBox(getAnchorPaneForListView(), peopleTree);
 
         VBox root = new VBox(getMenuBar(), listViewHBox);
 
@@ -53,12 +58,12 @@ public class MainWindow implements Runnable {
         mainWindow.show();
     }
 
-    public TreeView<String> getTreeForPeople() {
-        Storage.setInstanceOf(new Storage());
-        Storage.getInstanceOf().loadDefaultObjects();
+    public static TreeItem<String> getTreeForPeople() {
+        TreeItem<String> family = new TreeItem<>("Family");
+        family.setExpanded(true);
+
         if (Storage.getInstanceOf() != null) {
-            TreeItem<String> family = new TreeItem<>("Family");
-            TreeItem<String> nameItem = null;
+            TreeItem<String> nameItem;
             TreeItem<String> ageItem;
             for (People people : Storage.getInstanceOf().getFamily().values()) {
                 nameItem = new TreeItem<>(people.getName());
@@ -66,10 +71,8 @@ public class MainWindow implements Runnable {
                 nameItem.getChildren().add(ageItem);
                 family.getChildren().add(nameItem);
             }
-
-            peopleTree.setRoot(family);
         }
-        return peopleTree;
+        return family;
     }
 
     private AnchorPane getAnchorPaneForListView() {
@@ -167,7 +170,8 @@ public class MainWindow implements Runnable {
                 new StringBuilder("Remove with key"),
                 new StringBuilder("Remove greater"),
                 new StringBuilder("Remove all"),
-                new StringBuilder("Remove lower"),
+                new StringBuilder("Remove lower key"),
+                new StringBuilder("Remove lower object"),
                 new StringBuilder("Clear"),
                 new StringBuilder("Add if max"),
                 new StringBuilder("Add if min"),
@@ -193,7 +197,7 @@ public class MainWindow implements Runnable {
             method.replace(0, 1, method.substring(0, 1).toLowerCase());
 
 
-            System.out.println(className);
+//            System.out.println(className);
 
             while (method.indexOf(" ") != -1) {
                 int start = method.indexOf(" ") + 1;
@@ -207,33 +211,32 @@ public class MainWindow implements Runnable {
             switch (className) {
                 case "Remove": {
                     try {
-                        RemoveObject.class.getDeclaredMethod(String.valueOf(method)).invoke(RemoveObject.class.newInstance());
+                        RemoveObject.class.getMethod(String.valueOf(method),peopleTree.getClass()).invoke(removeObject,peopleTree);
                     } catch (NoSuchMethodException e) {
                         System.out.println("Method not found");
-                    } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
+                    } catch (IllegalAccessException | InvocationTargetException e) {
                         System.out.println(e.getMessage());
                     }
-                    break;
+                break;
+            }
+            case "Add":
+            case "Insert":
+            case "Import": {
+                try {
+                    AddObjects.class.getMethod(String.valueOf(method));
+                } catch (NoSuchMethodException e) {
+                    System.out.println("Method not found");
                 }
-                case "Add":
-                case "Insert":
-                case "Import": {
-                    try {
-                        AddObjects.class.getMethod(String.valueOf(method));
-                    } catch (NoSuchMethodException e) {
-                        System.out.println("Method not found");
-                    }
-                    break;
-                }
-                default: {
-                    try {
-                        OtherMethods.class.getMethod(String.valueOf(method));
-                    } catch (NoSuchMethodException e) {
-                        System.out.println("Method not found");
-                    }
+                break;
+            }
+            default: {
+                try {
+                    OtherMethods.class.getMethod(String.valueOf(method));
+                } catch (NoSuchMethodException e) {
+                    System.out.println("Method not found");
                 }
             }
-        });
-//        mainWindow.show();
-    }
+        }
+    });
+}
 }

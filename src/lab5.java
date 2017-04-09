@@ -10,7 +10,7 @@ public class lab5 {
             @Override
             public void run() {
                 try {
-                    Storage.getInstanceOf().saveSorage();
+                    Storage.getInstanceOf().saveStorage();
                 } catch (NullPointerException ex) {
                     System.out.println("Коллекция пуста, нечего сохранять в файл.");
                 }

@@ -80,12 +80,12 @@
         </classpath>
     </taskdef>
 
-    <!--<taskdef resource="net/sf/antcontrib/antlib.xml" uri="antlib:net.sf.antcontrib">-->
-        <!--<classpath>-->
-            <!--<fileset dir="${dir.lib}"/>-->
-        <!--</classpath>-->
-    <!--</taskdef>-->
 
+<!--    <taskdef resource="net/sf/antcontrib/antlib.xml" uri="antlib:net.sf.antcontrib">
+        <classpath>
+            <fileset dir="${dir.lib}"/>
+        </classpath>
+    </taskdef>-->
 
     <target name="history">
         <trycatch>

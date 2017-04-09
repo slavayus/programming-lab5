@@ -16,6 +16,10 @@
     </path>
 
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 3b8446b1256789d23cd87d248012e4bfa9e333b7
     <target name="deleteOldBuild">
         <delete dir="build"/>
     </target>
@@ -60,7 +64,7 @@
 
 
     <target name="test" depends="compile">
-        <junit fork="yes" showoutput="true" printsummary="on" haltonfailure="no">
+        <junit fork = "yes" showoutput="true" printsummary="on" haltonfailure="no">
             <test name="test.GUI.ManTest"/>
             <test name="test.GUI.ParseCSVTest"/>
             <classpath>
@@ -116,4 +120,6 @@
     </target>
 
 
+
+    
 </project>

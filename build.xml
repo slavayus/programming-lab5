@@ -16,10 +16,6 @@
     </path>
 
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 3b8446b1256789d23cd87d248012e4bfa9e333b7
     <target name="deleteOldBuild">
         <delete dir="build"/>
     </target>

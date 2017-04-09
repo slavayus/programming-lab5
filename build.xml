@@ -71,11 +71,18 @@
         </junit>
     </target>
 
-
     <xmlvalidate failonerror = "no" lenient = "yes" warn = "yes">
         <fileset dir = "./" includes = "*.xml"/>
     </xmlvalidate>
 
+
+
+    <target name="history">
+        <exec dir ="./src" executable ="git" >
+            <arg value ="checkout"/>
+            <arg value="HEAD^1"/>
+        </exec>
+    </target>
 
     
 </project>

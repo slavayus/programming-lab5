@@ -16,7 +16,6 @@
     </path>
 
 
-
     <target name="deleteOldBuild">
         <delete dir="build"/>
     </target>
@@ -61,7 +60,7 @@
 
 
     <target name="test" depends="compile">
-        <junit fork = "yes" showoutput="true" printsummary="on" haltonfailure="no">
+        <junit fork="yes" showoutput="true" printsummary="on" haltonfailure="no">
             <test name="test.GUI.ManTest"/>
             <test name="test.GUI.ParseCSVTest"/>
             <classpath>
@@ -71,18 +70,50 @@
         </junit>
     </target>
 
-    <xmlvalidate failonerror = "no" lenient = "yes" warn = "yes">
-        <fileset dir = "./" includes = "*.xml"/>
+    <xmlvalidate failonerror="no" lenient="yes" warn="yes">
+        <fileset dir="./" includes="*.xml"/>
     </xmlvalidate>
 
+    <taskdef resource="net/sf/antcontrib/antcontrib.properties">
+        <classpath>
+            <fileset dir="${dir.lib}"/>
+        </classpath>
+    </taskdef>
+
+    <!--<taskdef resource="net/sf/antcontrib/antlib.xml" uri="antlib:net.sf.antcontrib">-->
+        <!--<classpath>-->
+            <!--<fileset dir="${dir.lib}"/>-->
+        <!--</classpath>-->
+    <!--</taskdef>-->
 
 
     <target name="history">
-        <exec dir ="./src" executable ="git" >
-            <arg value ="checkout"/>
-            <arg value="HEAD^1"/>
-        </exec>
+        <trycatch>
+            <try>
+                <antcall target="compile"/>
+            </try>
+            <catch>
+                <exec dir="./src" executable="git">
+                    <arg value="checkout"/>
+                    <arg value="HEAD^1"/>
+                </exec>
+                <antcall target="compile"/>
+                <runtarget target="history"/>
+            </catch>
+        </trycatch>
+
+
+        <!--<ac:for list="${difflist}" param="file" keepgoing="true">
+            <sequential>
+                <echo message="Looking whether @{file} has changed"/>
+                <condition property="foundindifflog">
+                    <matches pattern="@{file}" string="${git_diff_result}"/>
+                </condition>
+                <property name="founddiff" value="yes"/>
+            </sequential>
+        </ac:for>-->
+
     </target>
 
-    
+
 </project>

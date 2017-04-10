@@ -1,6 +1,7 @@
 package commands;
 
 import GUI.MainWindow;
+import GUI.ReportWindow;
 import GUI.Storage;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -30,8 +31,10 @@ public class RemoveObject {
     private static Gson gson = new GsonBuilder().create();
     private static PrintWriter printWriter = new PrintWriter(System.out, true);
     private String data;
-    private Stage dataStage = null;
     private People people;
+    private Stage dataStage = null;
+    private TextField keyTextField = new TextField();
+    private Button buttonOK = new Button("OK");
 
     /**
      * Команда: remove_greater_key.
@@ -44,10 +47,18 @@ public class RemoveObject {
      */
     public void removeGreaterKey(TreeView<String> peopleTree) {
         if (dataStage == null) {
-            readDataFromTextField("Key", peopleEntry -> peopleEntry.getKey().compareTo(data) > 0, peopleTree);
+            readDataFromTextField("Key");
         } else {
             dataStage.toFront();
         }
+        buttonOK.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                removeFromCollectionWithKey(peopleEntry -> peopleEntry.getKey().compareTo(data) > 0, peopleTree, keyTextField);
+            }
+        });
+
+        buttonOK.setOnMouseClicked(event -> removeFromCollectionWithKey(peopleEntry -> peopleEntry.getKey().compareTo(data) > 0, peopleTree, keyTextField));
+
     }
 
     /**
@@ -59,10 +70,19 @@ public class RemoveObject {
      */
     public void removeWithKey(TreeView<String> peopleTree) {
         if (dataStage == null) {
-            readDataFromTextField("Key", peopleEntry -> peopleEntry.getKey().equals(data), peopleTree);
+            readDataFromTextField("Key");
         } else {
             dataStage.toFront();
         }
+
+        buttonOK.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                removeFromCollectionWithKey(peopleEntry -> peopleEntry.getKey().equals(data), peopleTree, keyTextField);
+            }
+        });
+
+        buttonOK.setOnMouseClicked(event -> removeFromCollectionWithKey(peopleEntry -> peopleEntry.getKey().equals(data), peopleTree, keyTextField));
+
     }
 
     /**
@@ -75,10 +95,19 @@ public class RemoveObject {
      */
     public void removeGreater(TreeView<String> peopleTree) {
         if (dataStage == null) {
-            readDataFromTextField("Object in Json", peopleEntry -> peopleEntry.getValue().getAge() > people.getAge(), peopleTree);
+            readDataFromTextField("Object in Json");
         } else {
             dataStage.toFront();
         }
+
+        buttonOK.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                removeFromCollectionWithObject(peopleEntry -> peopleEntry.getValue().getAge() > people.getAge(), peopleTree, keyTextField);
+            }
+        });
+
+        buttonOK.setOnMouseClicked(event -> removeFromCollectionWithObject(peopleEntry -> peopleEntry.getValue().getAge() > people.getAge(), peopleTree, keyTextField));
+
     }
 
     /**
@@ -91,17 +120,26 @@ public class RemoveObject {
      */
     public void removeAll(TreeView<String> peopleTree) {
         if (dataStage == null) {
-            readDataFromTextField("Object in Json", peopleEntry -> peopleEntry.getValue().getAge() == people.getAge(), peopleTree);
+            readDataFromTextField("Object in Json");
         } else {
             dataStage.toFront();
         }
+
+        buttonOK.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                removeFromCollectionWithObject(peopleEntry -> peopleEntry.getValue().getAge() == people.getAge(), peopleTree, keyTextField);
+            }
+        });
+
+        buttonOK.setOnMouseClicked(event -> removeFromCollectionWithObject(peopleEntry -> peopleEntry.getValue().getAge() == people.getAge(), peopleTree, keyTextField));
+
     }
 
     /**
      * Команда remove_lower.
      * Удаляет из коллекции все элементы, меньшие, чем заданный.
      *
-     * @param object Ожидается строка формата json для преобразования в конкретный экземпляр класса {@link People}
+     * @param object     Ожидается строка формата json для преобразования в конкретный экземпляр класса {@link People}
      * @param data
      * @param peopleTree
      * @return boolean Сигнал об успешном распозновании объекта.
@@ -110,51 +148,59 @@ public class RemoveObject {
      */
     public void removeLowerObject(TreeView<String> peopleTree) {
         if (dataStage == null) {
-            readDataFromTextField("Object in Json", peopleEntry -> peopleEntry.getValue().getAge() < people.getAge(), peopleTree);
+            readDataFromTextField("Object in Json");
         } else {
             dataStage.toFront();
         }
+
+        buttonOK.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                removeFromCollectionWithObject(peopleEntry -> peopleEntry.getValue().getAge() < people.getAge(), peopleTree, keyTextField);
+            }
+        });
+
+        buttonOK.setOnMouseClicked(event -> removeFromCollectionWithObject(peopleEntry -> peopleEntry.getValue().getAge() < people.getAge(), peopleTree, keyTextField));
+
     }
 
     /**
      * Команда remove_lower.
      * Удаляет из коллекции все элементы, ключ которых меньше, чем заданный.
      *
-     * @param key Ожидается ключ для коллекции {@link Storage#family}.
+     * @param key        Ожидается ключ для коллекции {@link Storage#family}.
      * @param data
      * @param peopleTree
      * @version 1.0
      */
     public void removeLowerKey(TreeView<String> peopleTree) {
         if (dataStage == null) {
-            readDataFromTextField("Key", peopleEntry -> peopleEntry.getKey().compareTo(data) < 0, peopleTree);
+            readDataFromTextField("Key");
         } else {
             dataStage.toFront();
         }
+
+        buttonOK.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                removeFromCollectionWithKey(peopleEntry -> peopleEntry.getKey().compareTo(data) < 0, peopleTree, keyTextField);
+            }
+        });
+
+        buttonOK.setOnMouseClicked(event -> removeFromCollectionWithKey(peopleEntry -> peopleEntry.getKey().compareTo(data) < 0, peopleTree, keyTextField));
+
     }
 
-    private void readDataFromTextField(String element, Predicate<Map.Entry<String, People>> predicate, TreeView<String> peopleTree) {
+    private void readDataFromTextField(String element) {
         dataStage = new Stage();
 
 
         Label keyLabel = new Label("Please, enter " + element);
         keyLabel.setFont(Font.font("Helvetica", FontWeight.LIGHT, 16));
 
-        TextField keyTextField = new TextField();
         keyTextField.setPromptText(element);
 
 
-        Button buttonOK = new Button("OK");
         HBox buttonOKHBox = new HBox(buttonOK);
         buttonOKHBox.setPadding(new Insets(0, 18, 0, 245));
-
-        buttonOK.setOnKeyPressed(event -> {
-            if (event.getCode() == KeyCode.ENTER) {
-                removeFromCollection(predicate, peopleTree, keyTextField);
-            }
-        });
-
-        buttonOK.setOnMouseClicked(event -> removeFromCollection(predicate, peopleTree, keyTextField));
 
         VBox enterKeyVBox = new VBox(keyLabel, keyTextField, buttonOKHBox);
         enterKeyVBox.setSpacing(5);
@@ -169,21 +215,33 @@ public class RemoveObject {
         dataStage.setOnCloseRequest(event -> dataStage = null);
     }
 
-    private void removeFromCollection(Predicate<Map.Entry<String, People>> predicate, TreeView<String> peopleTree, TextField keyTextField) {
-        this.data = keyTextField.getText();
+    private void removeFromCollectionWithKey(Predicate<Map.Entry<String, People>> predicate, TreeView<String> peopleTree, TextField textField) {
+        this.data = textField.getText();
         dataStage.close();
-
-        try {
-            people = gson.fromJson(data, People.class);
-        } catch (JsonSyntaxException ex) {
-            printWriter.println("Не удалось распознать объект, проверьте корректность данных");
-            printWriter.println(ex.getCause());
-        }
+        dataStage = null;
 
         int size = Storage.getInstanceOf().getFamily().size();
         Storage.getInstanceOf().getFamily().entrySet().removeIf(predicate);
         peopleTree.setRoot(MainWindow.getTreeForPeople());
-        printWriter.printf("Операция выполнена успешно. Удалено %d объекта\n", size - Storage.getInstanceOf().getFamily().size());//Можно добавить, чтобы выводил в новом окне
-        dataStage = null;
+        new ReportWindow("Done", "Операция выполнена успешно. \nУдалено " + (size - Storage.getInstanceOf().getFamily().size()) + " объекта.").run();
+
     }
+
+
+    private void removeFromCollectionWithObject(Predicate<Map.Entry<String, People>> predicate, TreeView<String> peopleTree, TextField textField) {
+        this.data = textField.getText();
+        dataStage.close();
+        dataStage = null;
+
+        try {
+            people = gson.fromJson(data, People.class);
+            int size = Storage.getInstanceOf().getFamily().size();
+            Storage.getInstanceOf().getFamily().entrySet().removeIf(predicate);
+            peopleTree.setRoot(MainWindow.getTreeForPeople());
+            new ReportWindow("Done", "Операция выполнена успешно. \nУдалено " + (size - Storage.getInstanceOf().getFamily().size()) + " объекта.").run();
+        } catch (JsonSyntaxException ex) {
+            new ReportWindow("Error", "Не удалось распознать объект, \nпроверьте корректность данных").run();
+        }
+    }
+
 }

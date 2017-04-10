@@ -19,160 +19,67 @@ import java.util.*;
 /**
  * Created by slavik on 19.02.17.
  */
-public class Storage {
+public final class Storage implements Runnable {
     private Map<String, People> family = new LinkedHashMap<>();
     private final int аllPlaces = 15;
     private Map<Integer, People> familyOfChild = new LinkedHashMap<>();
     private List<Place> places = new ArrayList<>();
     private List<People> atTable = new ArrayList<>();
     private static Storage instanceOf;
+    private String title;
+    private String message;
 
-    public Storage() {
+    static {
+        instanceOf = new Storage();
     }
 
-    void loadFromFile() {
+    private Storage() {
+    }
+
+    public void run() {
         GsonBuilder builder = new GsonBuilder();
         builder.registerTypeAdapter(Missable.class, new InterfaceAdapter<People>());
         builder.registerTypeAdapter(Chatable.class, new InterfaceAdapter<People>());
         builder.registerTypeAdapter(Botherable.class, new InterfaceAdapter<People>());
         Gson gson = builder.create();
 
-
-        String string = "";
+        StringBuilder data = new StringBuilder();
         try (FileReader reader = new FileReader("objects")) {
             int c;
             while ((c = reader.read()) != -1) {
-                string = string + (char) c;
+                data.append((char)c);
             }
             Type typeMap = new TypeToken<Map<String, People>>() {
             }.getType();
-            Map<String,People> map = gson.fromJson(string,typeMap);
+            Map<String,People> map = gson.fromJson(data.toString(),typeMap);
             if (map==null)
                 throw new NullPointerException();
             family.clear();
             family.putAll(map);
-            System.out.printf("%d объекта считано с файла 'objects'\n", family.size());
+            title = "Done";
+            message = family.size()+" объекта считано с файла: \nobjects";
         } catch (JsonSyntaxException e) {
-            System.out.println("Не удалось распознать объект, проверьте корректность данных");
-            System.out.println(e.getCause());
+            title = "Error";
+            message = "Не удалось распознать объект, \nпроверьте корректность данных";
         } catch(FileNotFoundException ex) {
-            System.out.println("Файл не найден");
+            title = "Error";
+            message = "Файл не найден\n";
         }catch (IOException ex) {
-            System.out.println("Произошла ошибка при чтении файла");
+            title = "Error";
+            message = "Произошла ошибка при чтении файла\n";
         }catch (NullPointerException ex){
-            System.out.println("Произошла ошибка, возможно файл пуст");
+            title = "Error";
+            message = "Произошла ошибка, возможно файл пуст\n";
         }
     }
 
-
-    void loadDefaultObjects() {
-        People x = new People();
-
-        for (int i = 0; i < аllPlaces; i++) {
-            places.add(new Place());
-        }
-
-        x.setName("Малыш");
-        x.setAge(7);
-        places.get(0).setFull(x);
-        family.put("0", x);
-
-        x = new People();
-        x.setName("мама");
-        x.setAge(31);
-        places.get(1).setFull(x);
-        family.put("1", x);
-        familyOfChild.put(0, x);
-
-        x = new People();
-        x.setName("Папа");
-        x.setAge(32);
-        places.get(2).setFull(x);
-        family.put("2", x);
-        familyOfChild.put(1, x);
-
-        x = new People();
-        x.setName("Босс");
-        x.setAge(23);
-        places.get(3).setFull(x);
-        family.put("3", x);
-        familyOfChild.put(2, x);
-
-        x = new People();
-        x.setName("Бетан");
-        x.setAge(26);
-        places.get(4).setFull(x);
-        family.put("4", x);
-        familyOfChild.put(3, x);
-
-        x = new People();
-        x.setName("Бок");
-        x.setAge(38);
-        places.get(5).setFull(x);
-        family.put("5", x);
-
-        x = new People();
-        x.setName("Фрид");
-        x.setAge(45);
-        places.get(6).setFull(x);
-        family.put("6", x);
-
-        System.out.println("Данные загружены");
-//        atTable.add(family.get(0));
-
-//        atTable.add(family.get(5));
-//        atTable.add(family.get(1));
-//        atTable.add(family.get(2));
-//        atTable.add(family.get(4));
-//        atTable.add(family.get(3));
-
-
-//        Map<Integer, People> familyClone = new LinkedHashMap<>(family);
-//
-//        for (int i = 0; i < atTable.size(); i++) {
-//            familyClone.remove(i);
-//        }
-//        familyClone.remove(6);
-//        for (People people : familyClone.values()) {
-//            family.get(0).setMiss(people);
-//        }
-//
-//        x = family.get(0);
-//        x.setBother(family.get(6));
-//
-//        x = family.get(5);
-//        x.setChat(family.get(6));
-//
-////        writeMessage();
+    public String getTitle() {
+        return title;
     }
 
-
-    /**
-     * Команда save.
-     * Сохраняет весь объект типа {@link Storage} в файл.
-     *
-     * @version 1.0
-     */
-    public void saveStorage() {
-        GsonBuilder builder = new GsonBuilder();
-
-        builder.registerTypeAdapter(Missable.class, new InterfaceAdapter<People>());
-        builder.registerTypeAdapter(Chatable.class, new InterfaceAdapter<People>());
-        builder.registerTypeAdapter(Botherable.class, new InterfaceAdapter<People>());
-
-        Gson gson = builder.create();
-
-        try (PrintWriter printWriter = new PrintWriter("objects")) {
-            printWriter.println(gson.toJson(Storage.getInstanceOf().getFamily()));
-            System.out.println("Коллекция 'family' была сохранена в файл 'objects'");
-        }catch (FileNotFoundException ex ){
-            System.out.println("Не хватает прав на запись в файл 'objects'");
-        }catch (Exception e) {
-            PrintWriter printWriter = new PrintWriter(System.out,true);
-            printWriter.println("При сериализации произошла ошибка");
-        }
+    public String getMessage() {
+        return message;
     }
-
 
     public void writeMessage() {
 
@@ -226,6 +133,11 @@ public class Storage {
         } catch (Exception ex) {
         }
         System.out.println();
+    }
+
+
+    public Map<Integer,People> getFamilyOfChild(){
+        return familyOfChild;
     }
 
     public Map<String, People> getFamily() {

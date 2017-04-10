@@ -10,21 +10,12 @@ import javafx.stage.Stage;
 public class lab5 extends Application {
     public static void main(String[] args) {
         launch(args);
-//        new Thread(new GUI(args.length == 0 ? null : args[0])).start();
     }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
 
-        /*RegisterWindow registerWindow = */new Thread(new RegisterWindow(primaryStage)).run();
-//        registerWindow.showRegisterWindow();
-
-
-//        MainWindow workWithCollection = new MainWindow();
-//        workWithCollection.getRegisterWindow(primaryStage);
-
-//        workWithCollection.mainWindow();
-
+        new Thread(new RegisterWindow(primaryStage)).run();
     }
 
 }

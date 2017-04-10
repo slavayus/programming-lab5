@@ -1,18 +1,17 @@
 package GUI;
 
-import commands.AddObjects;
-import commands.OtherMethods;
-import commands.RemoveObject;
+import commands.*;
 import deprecated.People;
 import javafx.application.Platform;
-import javafx.beans.InvalidationListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.collections.ObservableSet;
 import javafx.event.ActionEvent;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
@@ -21,6 +20,7 @@ import javafx.stage.Stage;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Date;
 
 /**
  * Created by slavik on 01.04.17.
@@ -31,12 +31,13 @@ public class MainWindow implements Runnable {
     private RemoveObject removeObject = new RemoveObject();
     private AddObjects addObjects = new AddObjects();
     private ImportObjects importObjects = new ImportObjects();
-
+    private InsertObject insertObject = new InsertObject();
+    private OtherMethods otherMethods = new OtherMethods();
+    private static final Date currentDate = new Date();
 
     @Override
     public void run() {
-        Storage.setInstanceOf(new Storage());
-        Storage.getInstanceOf().loadDefaultObjects();
+        Storage.getInstanceOf().run();
 
         peopleTree = new TreeView<>(getTreeForPeople());
         peopleTree.setPrefWidth(10000);
@@ -51,6 +52,7 @@ public class MainWindow implements Runnable {
         mainWindow.setTitle("Work with Collection");
         mainWindow.setScene(new Scene(root, 428, 382));
         mainWindow.show();
+        new ReportWindow(Storage.getInstanceOf().getTitle(), Storage.getInstanceOf().getMessage()).run();
     }
 
     public static TreeItem<String> getTreeForPeople() {
@@ -72,14 +74,14 @@ public class MainWindow implements Runnable {
 
     private AnchorPane getAnchorPaneForListView() {
         ListView<StringBuilder> listView = getListView();
-        listView.setPrefSize(155, 110);
+        listView.setPrefSize(160, 115);
 
         AnchorPane.setTopAnchor(listView, 0.0);
         AnchorPane.setBottomAnchor(listView, 0.0);
         AnchorPane.setLeftAnchor(listView, 0.0);
         AnchorPane anchorPane = new AnchorPane(listView);
 
-        anchorPane.setPrefSize(110, 10000);
+        anchorPane.setPrefSize(115, 10000);
 
         return anchorPane;
     }
@@ -100,22 +102,62 @@ public class MainWindow implements Runnable {
     private Menu getFileMenu() {
         Menu fileMenu = new Menu("_File");
         fileMenu.setMnemonicParsing(true);
+
         MenuItem exitFileMenuItem = new MenuItem("Exit");
+        exitFileMenuItem.setAccelerator(KeyCombination.keyCombination("Ctrl+F4"));
 
         //ExitFileMenuListener
         exitFileMenuItem.setOnAction(event -> Platform.exit());
 
-        exitFileMenuItem.setAccelerator(KeyCombination.keyCombination("Ctrl+F4"));
-        fileMenu.getItems().add(exitFileMenuItem);
-        MenuItem homeFileMenuItem = new MenuItem("Home");
 
+        MenuItem homeFileMenuItem = new MenuItem("Home");
         //HomeFileMenuItemListener
         homeFileMenuItem.setOnAction(event -> {
             mainWindow.close();
             new Thread(new RegisterWindow(new Stage())).run();
         });
 
-        fileMenu.getItems().add(homeFileMenuItem);
+
+        MenuItem infoFileMenuItem = new MenuItem("_Info");
+        infoFileMenuItem.setMnemonicParsing(true);
+        //InfoFileMenuItem
+        infoFileMenuItem.setOnAction(event -> {
+            Stage infoStage = new Stage();
+
+            Class cl = Storage.getInstanceOf().getFamily().getClass();
+            Label infoLabel = new Label("Имя коллекции - " + cl.getCanonicalName() +
+                    "\nДата инициализации - " + currentDate +
+                    "\nКоличество элемнтов - " + Storage.getInstanceOf().getFamily().size() +
+                    "\nПакет - " + cl.getPackage() +
+                    "\nИмя родительсокго класса - " + cl.getSuperclass().getName());
+
+            infoLabel.setCenterShape(true);
+            infoLabel.setAlignment(Pos.CENTER);
+            infoLabel.setPadding(new Insets(20, 0, 0, 20));
+
+
+            Button buttonOK = new Button("OK");
+            HBox buttonOKHBox = new HBox(buttonOK);
+            buttonOKHBox.setPadding(new Insets(10, 9, 0, 455));
+            buttonOK.setOnAction(eventAction -> infoStage.close());
+
+            buttonOK.setOnKeyPressed(keyEvent -> {
+                if (keyEvent.getCode() == KeyCode.ENTER) {
+                    infoStage.close();
+                }
+            });
+
+            infoStage.setTitle("Info");
+            infoStage.centerOnScreen();
+            infoStage.setScene(new Scene(new VBox(infoLabel, buttonOKHBox), 500, 143));
+            infoStage.toFront();
+            infoStage.setMaximized(false);
+            infoStage.setResizable(false);
+            infoStage.show();
+        });
+
+
+        fileMenu.getItems().addAll(infoFileMenuItem, homeFileMenuItem, exitFileMenuItem);
 
         return fileMenu;
     }
@@ -167,12 +209,13 @@ public class MainWindow implements Runnable {
                 new StringBuilder("Remove all"),
                 new StringBuilder("Remove lower key"),
                 new StringBuilder("Remove lower object"),
-                new StringBuilder("Clear"),
                 new StringBuilder("Add if max"),
                 new StringBuilder("Add if min"),
                 new StringBuilder("Import all from file"),
-                new StringBuilder("Insert new object")
-        );
+                new StringBuilder("Insert new object"),
+                new StringBuilder("Clear"),
+                new StringBuilder("Save"),
+                new StringBuilder("Load default objects"));
 
         ListView<StringBuilder> peopleListView = new ListView<>(commands);
 
@@ -190,7 +233,6 @@ public class MainWindow implements Runnable {
                     new StringBuilder(method.substring(0, method.indexOf(" "))));
 
             method.replace(0, 1, method.substring(0, 1).toLowerCase());
-
 
 
             while (method.indexOf(" ") != -1) {
@@ -213,8 +255,7 @@ public class MainWindow implements Runnable {
                     }
                     break;
                 }
-                case "Add":
-                case "Insert": {
+                case "Add": {
                     try {
                         AddObjects.class.getMethod(String.valueOf(method), peopleTree.getClass()).invoke(addObjects, peopleTree);
                     } catch (NoSuchMethodException e) {
@@ -225,20 +266,20 @@ public class MainWindow implements Runnable {
                     break;
                 }
                 case "Import": {
-                    try {
-                        ImportObjects.class.getMethod(String.valueOf(method), peopleTree.getClass()).invoke(importObjects, peopleTree);
-                    } catch (NoSuchMethodException e) {
-                        System.out.println("Method not found");
-                    } catch (IllegalAccessException | InvocationTargetException e) {
-                        System.out.println(e.getMessage());
-                    }
+                    importObjects.importAllFromFile(peopleTree);
+                    break;
+                }
+                case "Insert": {
+                    insertObject.insertNewObject(peopleTree);
                     break;
                 }
                 default: {
                     try {
-                        OtherMethods.class.getMethod(String.valueOf(method));
+                        OtherMethods.class.getMethod(String.valueOf(method), peopleTree.getClass()).invoke(otherMethods, peopleTree);
                     } catch (NoSuchMethodException e) {
                         System.out.println("Method not found");
+                    } catch (IllegalAccessException | InvocationTargetException e) {
+                        System.out.println(e.getMessage());
                     }
                 }
             }

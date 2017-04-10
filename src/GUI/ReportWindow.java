@@ -12,8 +12,6 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
-import java.io.File;
-
 /**
  * Created by slavik on 08.04.17.
  */
@@ -24,7 +22,7 @@ public class ReportWindow implements Runnable, ButtonOKListener {
     private Button buttonOK = new Button("OK");
 
 
-    ReportWindow(String title, String message) {
+    public ReportWindow(String title, String message) {
         this.title = title;
         this.message = message;
     }
@@ -64,7 +62,7 @@ public class ReportWindow implements Runnable, ButtonOKListener {
 
     private HBox getButtonOK() {
         HBox buttonOKHBox = new HBox(buttonOK);
-        buttonOKHBox.setPadding(new Insets(10, 18, 0, 245));
+        buttonOKHBox.setPadding(new Insets(10, 9, 0, 255));
         buttonOKListener();
 
         return buttonOKHBox;

@@ -16,8 +16,6 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
-import javax.swing.plaf.nimbus.State;
-
 /**
  * Created by slavik on 02.04.17.
  */
@@ -43,7 +41,7 @@ public class RegisterWindow implements Runnable {
         rootHBox.getChildren().add(rootVBox);
         rootVBox.getChildren().addAll(showWelcomeHBox(), showUserNameHBox(), showUserPasswordHBox(), showSubmitButtonHBox());
 
-        primaryStage.setTitle("Hello VBox");
+        primaryStage.setTitle("Work with Collection");
         primaryStage.setMinHeight(290);
         primaryStage.setMinWidth(340);
         primaryStage.setScene(new Scene(rootHBox, 360, 280));
@@ -121,7 +119,7 @@ public class RegisterWindow implements Runnable {
         Image image = new Image("./images/register/signup.jpg");
         ImageView imageView = new ImageView(image);
 
-        welcomeHBox.getChildren().addAll(welcomeLabel,imageView);
+        welcomeHBox.getChildren().addAll(welcomeLabel/*,imageView*/);
         return welcomeHBox;
     }
 }

@@ -5,11 +5,8 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 
 import java.io.*;
-import java.lang.reflect.Type;
-import java.util.Map;
 
 import GUI.*;
-import com.google.gson.reflect.TypeToken;
 import deprecated.People;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -22,12 +19,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import old.school.Botherable;
-import old.school.Chatable;
-import old.school.InterfaceAdapter;
-import old.school.Missable;
 
 /**
  * Created by slavik on 22.02.17.
@@ -37,7 +29,7 @@ public class AddObjects {
     private static Gson gson = new GsonBuilder().create();
     private static PrintWriter printWriter = new PrintWriter(System.out, true);
     private Stage dataStage = null;
-    private People people;
+    private TextField keyTextField = new TextField();
 
 
     /**
@@ -72,52 +64,6 @@ public class AddObjects {
         }
     }
 
-    /**
-     * Команда insert.
-     * Добавляет новый элемент с заданным ключом.
-     *
-     * @param string Экземплят типа {@link People} для добавления в коллекцию.
-     * @version 2.0
-     */
-    public void insertNewObject(TreeView<String> peopleTree) {
-        boolean flag = true;
-        String string = "";
-        String object = null, key = null;
-        try {
-            key = string.substring(string.indexOf('{') + 1, string.indexOf('}'));
-            int first = string.indexOf('}') + 2;
-            int last = first;
-            while (string.charAt(last) != '}') {
-                last++;
-            }
-            object = string.substring(first - 1, last + 1);
-            object = object.trim();
-        } catch (IndexOutOfBoundsException ex) {
-            System.out.println("Не правильно введены данные об объекте");
-            flag = false;
-        } catch (NullPointerException ex) {
-            System.out.println("Введите данные об объекте");
-            flag = false;
-        }
-
-        if (flag) {
-            try {
-                People people = gson.fromJson(object, People.class);
-                if (people == null) {
-                    throw new NullPointerException();
-                }
-                Storage.getInstanceOf().getFamily().put(key, people);
-                printWriter.println("Объект успешно добавлен");
-            } catch (NullPointerException ex) {
-                printWriter.println("Не ввели данные об объекте");
-            } catch (JsonSyntaxException ex) {
-                printWriter.println("Не удалось распознать объект, проверьте корректность данных");
-                printWriter.println(ex.getCause());
-            }
-        }
-
-    }
-
     private void readDataFromTextField(int min, TreeView<String> peopleTree) {
         dataStage = new Stage();
 
@@ -125,13 +71,12 @@ public class AddObjects {
         Label keyLabel = new Label("Please, enter Object");
         keyLabel.setFont(Font.font("Helvetica", FontWeight.LIGHT, 16));
 
-        TextField keyTextField = new TextField();
-        keyTextField.setPromptText("Object");
+        keyTextField.setPromptText("{name=\"name\";age=1}");
 
 
         Button buttonOK = new Button("OK");
         HBox buttonOKHBox = new HBox(buttonOK);
-        buttonOKHBox.setPadding(new Insets(0, 18, 0, 245));
+        buttonOKHBox.setPadding(new Insets(0, 9, 0, 255));
 
         buttonOK.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ENTER) {
@@ -139,9 +84,7 @@ public class AddObjects {
             }
         });
 
-        buttonOK.setOnMouseClicked(event -> {
-            addToCollection(min, peopleTree, keyTextField);
-        });
+        buttonOK.setOnMouseClicked(event -> addToCollection(min, peopleTree, keyTextField));
 
         VBox enterKeyVBox = new VBox(keyLabel, keyTextField, buttonOKHBox);
         enterKeyVBox.setSpacing(5);
@@ -197,15 +140,14 @@ public class AddObjects {
                     }
                 }
 
-                printWriter.println("Объект успешно добавлен");
+                new ReportWindow("Done", "Объект успешно добавлен \n ").run();
             } else {
-                System.out.println("Объект не добавлен");
+                new ReportWindow("Done", "Объект не добавлен\n ").run();
             }
         } catch (JsonSyntaxException ex) {
-            printWriter.println("Не удалось распознать объект, проверьте корректность данных");
-            printWriter.println(ex.getCause());
+            new ReportWindow("Error", "Не удалось распознать объект,\nпроверьте корректность данных").run();
         } catch (NullPointerException ex) {
-            printWriter.println("Не ввели данные об объекте");
+            new ReportWindow("Error", "\nНе ввели данные об объекте").run();
         }
 
         peopleTree.setRoot(MainWindow.getTreeForPeople());

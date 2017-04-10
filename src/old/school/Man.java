@@ -4,30 +4,43 @@ package old.school;
  * Created by slavik on 30.10.16.
  */
 public abstract class Man {
-        protected String name;
-        protected int age;
+    protected String name;
+    protected byte age;
 
-        protected Man(String name){
-            this.name = name;
-        }
-        protected Man(){
+    protected Man(String name) {
+        setName(name);
+    }
 
-        }
+    protected Man() {
 
-        public void setName(String x){
-            name = x;
+    }
 
-        }
+    public boolean setName(String name) {
+        String wrongChars = "qwertyuiopasdfghjklzxcvbnmйцукенгшщзхъфывапролдячсмитьбюё";
 
-        public String getName(){
-            return name;
-        }
-
-        public void setAge(int x){
-            age = x;
+        for(int i=0; i<name.length(); i++){
+            if(!wrongChars.contains(name.substring(i,i+1).toLowerCase())){
+                return false;
+            }
         }
 
-        public int getAge(){
-            return age;
+        this.name = name;
+        return true;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public boolean setAge(byte age) {
+        if(age<0){
+            return false;
         }
+        this.age = age;
+        return true;
+    }
+
+    public int getAge() {
+        return age;
+    }
 }

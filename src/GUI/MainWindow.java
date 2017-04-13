@@ -33,11 +33,13 @@ public class MainWindow implements Runnable {
     private AddObjects addObjects = new AddObjects();
     private ImportObjects importObjects = new ImportObjects();
     private InsertObject insertObject = new InsertObject();
-    private OtherMethods otherMethods = new OtherMethods();
     private static final Date currentDate = new Date();
+    private final OtherMethods otherMethods = new OtherMethods();
 
     @Override
     public void run() {
+//        new Thread(Storage.getInstanceOf()).start();
+//        Thread.sleep(1000);
         Storage.getInstanceOf().run();
 
         peopleTree = new TreeView<>(getTreeForPeople());
@@ -46,7 +48,6 @@ public class MainWindow implements Runnable {
 
         peopleTree.setPrefWidth(10000);
         peopleTree.setStyle("-fx-background-color: #000000");
-//        peopleTree.setShowRoot(false);
 
         HBox listViewHBox = new HBox(getAnchorPaneForListView(), peopleTree);
 
@@ -56,11 +57,6 @@ public class MainWindow implements Runnable {
         mainWindow.setTitle("Work with Collection");
         mainWindow.setScene(new Scene(root, 428, 382));
         mainWindow.show();
-        if(Storage.getInstanceOf().getTitle().equals("Done")){
-            new ShowAlert(Alert.AlertType.INFORMATION, Storage.getInstanceOf().getTitle(), Storage.getInstanceOf().getMessage());
-        }else{
-            new ShowAlert(Alert.AlertType.ERROR, Storage.getInstanceOf().getTitle(), Storage.getInstanceOf().getMessage());
-        }
     }
 
     public static TreeItem<String> getTreeForPeople() {
@@ -96,7 +92,7 @@ public class MainWindow implements Runnable {
     }
 
     private MenuBar getMenuBar() {
-        MenuBar menuBar = new MenuBar(getFileMenu(), getProductMenu(), getAboutMenu());
+        MenuBar menuBar = new MenuBar(getFileMenu(), getProductMenu(), getAboutMenu(), getEditItemMenu());
         menuBar.setUseSystemMenuBar(true);
         return menuBar;
     }
@@ -209,6 +205,31 @@ public class MainWindow implements Runnable {
         return aboutMenu;
     }
 
+    private Menu getEditItemMenu() {
+        Menu aboutMenu = new Menu("_Edit");
+        aboutMenu.setMnemonicParsing(true);
+
+        MenuItem saveMenuItem = new MenuItem("Save");
+        aboutMenu.getItems().add(saveMenuItem);
+
+        //EditSaveMenuListener
+        saveMenuItem.setOnAction((ActionEvent event) -> otherMethods.save());
+
+        MenuItem clearMenuItem = new MenuItem("Clear");
+        aboutMenu.getItems().add(clearMenuItem);
+
+        //EditClearMenuListener
+        clearMenuItem.setOnAction((ActionEvent event) -> otherMethods.clear(peopleTree));
+
+        MenuItem loadMenuItem = new MenuItem("Load");
+        aboutMenu.getItems().add(loadMenuItem);
+
+        //EditSaveMenuListener
+        loadMenuItem.setOnAction((ActionEvent event) -> otherMethods.loadDefaultObjects(peopleTree));
+
+        return aboutMenu;
+    }
+
     private ListView<StringBuilder> getListView() {
 
         ObservableList<StringBuilder> commands = FXCollections.observableArrayList(
@@ -221,10 +242,7 @@ public class MainWindow implements Runnable {
                 new StringBuilder("Add if max"),
                 new StringBuilder("Add if min"),
                 new StringBuilder("Import all from file"),
-                new StringBuilder("Insert new object"),
-                new StringBuilder("Clear"),
-                new StringBuilder("Save"),
-                new StringBuilder("Load default objects"));
+                new StringBuilder("Insert new object"));
 
         ListView<StringBuilder> peopleListView = new ListView<>(commands);
 
@@ -281,15 +299,6 @@ public class MainWindow implements Runnable {
                 case "Insert": {
                     insertObject.insertNewObject(peopleTree);
                     break;
-                }
-                default: {
-                    try {
-                        OtherMethods.class.getMethod(String.valueOf(method), peopleTree.getClass()).invoke(otherMethods, peopleTree);
-                    } catch (NoSuchMethodException e) {
-                        System.out.println("Method not found");
-                    } catch (IllegalAccessException | InvocationTargetException e) {
-                        System.out.println(e.getMessage());
-                    }
                 }
             }
         });

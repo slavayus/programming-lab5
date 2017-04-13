@@ -35,14 +35,9 @@ public class OtherMethods {
      *
      * @version 1.0
      */
-    public void save(TreeView<String> peopleTree) {
-        SaveDataToFile saveDataToFile = new SaveDataToFile();
-        new Thread(saveDataToFile).start();
-        if (saveDataToFile.getException() == null) {
-            new ShowAlert(Alert.AlertType.INFORMATION, "Done", "Коллекция 'family' была сохранена в файл: \nobjects");
-        } else {
-            new ShowAlert(Alert.AlertType.INFORMATION, "Error", "Не хватает прав на запись в файл: \nobjects");
-        }
+    public void save() {
+        new Thread(new SaveDataToFile()).start();
+        new ShowAlert(Alert.AlertType.INFORMATION, "Done", "Коллекция 'family' будет сохранена в файл: \nobjects");
     }
 
     public void loadDefaultObjects(TreeView<String> peopleTree) {

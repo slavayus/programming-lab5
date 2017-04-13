@@ -16,7 +16,6 @@ import java.io.PrintWriter;
  * Created by slavik on 11.04.17.
  */
 public final class SaveDataToFile implements Runnable {
-    private Exception exception;
 
     @Override
     public void run() {
@@ -31,12 +30,11 @@ public final class SaveDataToFile implements Runnable {
         try (PrintWriter printWriter = new PrintWriter("objects")) {
             printWriter.println(gson.toJson(Storage.getInstanceOf().getFamily()));
         }catch (FileNotFoundException ex ){
-            exception = ex;
+            try(PrintWriter writeLog = new PrintWriter("../out/log")) {
+                writeLog.write(ex.getMessage()+"\n");
+            } catch (FileNotFoundException e) {
+                //doNothing();
+            }
         }
     }
-
-    Exception getException() {
-        return exception;
-    }
-
 }

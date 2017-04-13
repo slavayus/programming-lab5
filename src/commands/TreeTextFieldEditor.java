@@ -19,14 +19,25 @@ public class TreeTextFieldEditor extends TreeCell<String> {
         if (textField == null)
             createTextField();
         setText(null);
-        setGraphic(textField);
         textField.selectAll();
+//        getTreeItem().setValue("kfj");
+        if(!getTreeItem().getChildren().isEmpty()){
+            try {
+                if(Integer.parseInt(textField.getText())>0){
+                    setGraphic(textField);
+                    textField.selectAll();
+                }
+            }catch (NumberFormatException ex){
+                cancelEdit();
+            }
+        }
     }
 
     private void createTextField() {
         textField = new TextField(getString());
         textField.setOnKeyReleased(e -> {
             if (e.getCode() == KeyCode.ENTER) {
+//                if
                 commitEdit(textField.getText());
             } else if (e.getCode() == KeyCode.ESCAPE) {
                 cancelEdit();

@@ -27,8 +27,6 @@ public final class Storage implements Runnable {
     private List<Place> places = new ArrayList<>();
     private List<People> atTable = new ArrayList<>();
     private static Storage instanceOf;
-    private String title;
-    private String message;
 
     static {
         instanceOf = new Storage();
@@ -44,42 +42,32 @@ public final class Storage implements Runnable {
         builder.registerTypeAdapter(Botherable.class, new InterfaceAdapter<People>());
         Gson gson = builder.create();
 
-        StringBuilder data = new StringBuilder();
-        try (FileReader reader = new FileReader("objects")) {
-            int c;
-            while ((c = reader.read()) != -1) {
-                data.append((char)c);
+
+        try (PrintWriter writeLog =new PrintWriter("./log")){
+            StringBuilder data = new StringBuilder();
+            try (FileReader reader = new FileReader("objects")) {
+//                System.out.println("YEE");
+                int c;
+                while ((c = reader.read()) != -1) {
+                    data.append((char)c);
+                }
+                Type typeMap = new TypeToken<Map<String, People>>() {
+                }.getType();
+                Map<String,People> map = gson.fromJson(data.toString(),typeMap);
+                if (map==null)
+                    throw new NullPointerException();
+                family.clear();
+                family.putAll(map);
+            } catch (Exception ex) {
+                writeLog.write(ex.getMessage()+"\n");
+//                writeLog.flush();
+                writeLog.close();
             }
-            Type typeMap = new TypeToken<Map<String, People>>() {
-            }.getType();
-            Map<String,People> map = gson.fromJson(data.toString(),typeMap);
-            if (map==null)
-                throw new NullPointerException();
-            family.clear();
-            family.putAll(map);
-            title = "Done";
-            message = family.size()+" объекта считано с файла: \nobjects";
-        } catch (JsonSyntaxException e) {
-            title = "Error";
-            message = "Не удалось распознать объект, \nпроверьте корректность данных";
-        } catch(FileNotFoundException ex) {
-            title = "Error";
-            message = "Файл не найден\n";
-        }catch (IOException ex) {
-            title = "Error";
-            message = "Произошла ошибка при чтении файла\n";
-        }catch (NullPointerException ex){
-            title = "Error";
-            message = "Произошла ошибка, возможно файл пуст\n";
+        } catch (FileNotFoundException e) {
+            //doNothing();
+            System.out.println("YEEE");
+
         }
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getMessage() {
-        return message;
     }
 
     public void writeMessage() {

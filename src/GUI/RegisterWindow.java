@@ -3,15 +3,12 @@ package GUI;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
@@ -23,18 +20,18 @@ public class RegisterWindow implements Runnable {
 
     private PasswordField userPasswordField;
     private Stage primaryStage;
+    private VBox rootVBox = new VBox();
+    private HBox rootHBox = new HBox();
 
     public RegisterWindow(Stage primaryStage){
         this.primaryStage = primaryStage;
     }
 
     public void run() {
-        HBox rootHBox = new HBox();
         rootHBox.setAlignment(Pos.CENTER);
         rootHBox.setStyle("-fx-background-color: #3FF4CB;");
 
 
-        VBox rootVBox = new VBox();
         rootVBox.setStyle("-fx-background-color: #3FF4CB;");
         rootVBox.setAlignment(Pos.CENTER_LEFT);
 
@@ -50,10 +47,11 @@ public class RegisterWindow implements Runnable {
 
     private HBox showSubmitButtonHBox() {
         HBox submitButtonHBox = new HBox();
-        submitButtonHBox.setPadding(new Insets(0, 10, 0, 263));
+        submitButtonHBox.setPadding(new Insets(0, 10, 20, 35));
+        submitButtonHBox.setSpacing(100);
 
         Button submitButton = new Button("Submit");
-        submitButtonHBox.getChildren().addAll(submitButton);
+        submitButtonHBox.getChildren().addAll(showColorPicker(),submitButton);
 
         submitButtonListener(submitButton);
 
@@ -119,7 +117,22 @@ public class RegisterWindow implements Runnable {
         Image image = new Image("./images/register/signup.jpg");
         ImageView imageView = new ImageView(image);
 
-        welcomeHBox.getChildren().addAll(welcomeLabel/*,imageView*/);
+        welcomeHBox.getChildren().addAll(welcomeLabel,imageView);
         return welcomeHBox;
+    }
+
+    private ColorPicker showColorPicker(){
+        ColorPicker colorPicker = new ColorPicker();
+        colorPicker.setOnAction(event -> {
+            Paint fill = colorPicker.getValue();
+            BackgroundFill backgroundFill =
+                    new BackgroundFill(fill,
+                            CornerRadii.EMPTY,
+                            Insets.EMPTY);
+            Background background = new Background(backgroundFill);
+            rootHBox.setBackground(background);
+            rootVBox.setBackground(background);
+        });
+        return colorPicker;
     }
 }

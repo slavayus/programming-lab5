@@ -1,7 +1,6 @@
 package commands;
 
 import GUI.MainWindow;
-import GUI.ReportWindow;
 import GUI.Storage;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -9,16 +8,14 @@ import com.google.gson.JsonSyntaxException;
 import deprecated.People;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TreeView;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
+import javafx.scene.control.Alert;
 
 import java.io.PrintWriter;
 import java.util.Map;
@@ -223,8 +220,7 @@ public class RemoveObject {
         int size = Storage.getInstanceOf().getFamily().size();
         Storage.getInstanceOf().getFamily().entrySet().removeIf(predicate);
         peopleTree.setRoot(MainWindow.getTreeForPeople());
-        new ReportWindow("Done", "Операция выполнена успешно. \nУдалено " + (size - Storage.getInstanceOf().getFamily().size()) + " объекта.").run();
-
+        new ShowAlert(Alert.AlertType.INFORMATION, "Done", "Операция выполнена успешно. \nУдалено " + (size - Storage.getInstanceOf().getFamily().size()) + " объекта.");
     }
 
 
@@ -238,10 +234,13 @@ public class RemoveObject {
             int size = Storage.getInstanceOf().getFamily().size();
             Storage.getInstanceOf().getFamily().entrySet().removeIf(predicate);
             peopleTree.setRoot(MainWindow.getTreeForPeople());
-            new ReportWindow("Done", "Операция выполнена успешно. \nУдалено " + (size - Storage.getInstanceOf().getFamily().size()) + " объекта.").run();
+            new ShowAlert(Alert.AlertType.INFORMATION, "Done","Операция выполнена успешно. \nУдалено " + (size - Storage.getInstanceOf().getFamily().size()) + " объекта.");
         } catch (JsonSyntaxException ex) {
-            new ReportWindow("Error", "Не удалось распознать объект, \nпроверьте корректность данных").run();
+            new ShowAlert(Alert.AlertType.ERROR, "Error", "Не удалось распознать объект, \nпроверьте корректность данных");
+        }catch(NullPointerException ex){
+            new ShowAlert(Alert.AlertType.ERROR,"Error", "Не ввели данные об объекте\n ");
         }
     }
+
 
 }

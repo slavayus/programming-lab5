@@ -10,10 +10,7 @@ import GUI.*;
 import deprecated.People;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TreeView;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -139,19 +136,20 @@ public class AddObjects {
                         Storage.getInstanceOf().getFamily().put(String.valueOf(Storage.getInstanceOf().getFamily().size()), people);
                     }
                 }
-
-                new ReportWindow("Done", "Объект успешно добавлен \n ").run();
+                new ShowAlert(Alert.AlertType.INFORMATION,"Done", "Объект успешно добавлен \n ");
             } else {
-                new ReportWindow("Done", "Объект не добавлен\n ").run();
+                new ShowAlert(Alert.AlertType.INFORMATION, "Done", "Объект не добавлен\n ");
             }
         } catch (JsonSyntaxException ex) {
-            new ReportWindow("Error", "Не удалось распознать объект,\nпроверьте корректность данных").run();
+            new ShowAlert(Alert.AlertType.ERROR, "Error", "Не удалось распознать объект,\nпроверьте корректность данных");
         } catch (NullPointerException ex) {
-            new ReportWindow("Error", "\nНе ввели данные об объекте").run();
+            new ShowAlert(Alert.AlertType.ERROR, "Error", "\nНе ввели данные об объекте");
         }
 
         peopleTree.setRoot(MainWindow.getTreeForPeople());
         dataStage.close();
         dataStage = null;
     }
+
+
 }

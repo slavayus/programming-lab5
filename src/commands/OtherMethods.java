@@ -1,16 +1,12 @@
 package commands;
 
 import GUI.MainWindow;
-import GUI.ReportWindow;
 import GUI.Storage;
 import deprecated.People;
 import deprecated.Place;
+import javafx.scene.control.Alert;
 import javafx.scene.control.TreeView;
 import javafx.stage.Stage;
-
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
-import java.util.Date;
 
 /**
  * Created by slavik on 05.04.17.
@@ -29,7 +25,7 @@ public class OtherMethods {
     public void clear(TreeView<String> peopleTree) {
         int size = Storage.getInstanceOf().getFamily().size();
         Storage.getInstanceOf().getFamily().clear();
-        new ReportWindow("Done", "Коллекция очищена. \nУдалено " + size + " объектов").run();
+        new ShowAlert(Alert.AlertType.INFORMATION, "Done", "Коллекция очищена. \nУдалено " + size + " объектов");
         peopleTree.setRoot(MainWindow.getTreeForPeople());
     }
 
@@ -43,9 +39,9 @@ public class OtherMethods {
         SaveDataToFile saveDataToFile = new SaveDataToFile();
         new Thread(saveDataToFile).start();
         if (saveDataToFile.getException() == null) {
-            new ReportWindow("Done", "Коллекция 'family' была сохранена в файл: \nobjects").run();
+            new ShowAlert(Alert.AlertType.INFORMATION, "Done", "Коллекция 'family' была сохранена в файл: \nobjects");
         } else {
-            new ReportWindow("Error", "Не хватает прав на запись в файл: \nobjects").run();
+            new ShowAlert(Alert.AlertType.INFORMATION, "Error", "Не хватает прав на запись в файл: \nobjects");
         }
     }
 
@@ -101,7 +97,7 @@ public class OtherMethods {
         Storage.getInstanceOf().getPlaces().get(6).setFull(x);
         Storage.getInstanceOf().getFamily().put("6", x);
 
-        new ReportWindow("Done","\nДанные загружены \n").run();
+        new ShowAlert(Alert.AlertType.INFORMATION, "Done","\nДанные загружены \n");
         peopleTree.setRoot(MainWindow.getTreeForPeople());
     }
 }

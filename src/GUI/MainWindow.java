@@ -17,6 +17,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
@@ -40,6 +41,9 @@ public class MainWindow implements Runnable {
         Storage.getInstanceOf().run();
 
         peopleTree = new TreeView<>(getTreeForPeople());
+        peopleTree.setEditable(true);
+        peopleTree.setCellFactory(param -> new TreeTextFieldEditor());
+
         peopleTree.setPrefWidth(10000);
         peopleTree.setStyle("-fx-background-color: #000000");
 //        peopleTree.setShowRoot(false);
@@ -52,7 +56,11 @@ public class MainWindow implements Runnable {
         mainWindow.setTitle("Work with Collection");
         mainWindow.setScene(new Scene(root, 428, 382));
         mainWindow.show();
-        new ReportWindow(Storage.getInstanceOf().getTitle(), Storage.getInstanceOf().getMessage()).run();
+        if(Storage.getInstanceOf().getTitle().equals("Done")){
+            new ShowAlert(Alert.AlertType.INFORMATION, Storage.getInstanceOf().getTitle(), Storage.getInstanceOf().getMessage());
+        }else{
+            new ShowAlert(Alert.AlertType.ERROR, Storage.getInstanceOf().getTitle(), Storage.getInstanceOf().getMessage());
+        }
     }
 
     public static TreeItem<String> getTreeForPeople() {
@@ -69,6 +77,7 @@ public class MainWindow implements Runnable {
                 family.getChildren().add(nameItem);
             }
         }
+
         return family;
     }
 
@@ -219,12 +228,12 @@ public class MainWindow implements Runnable {
 
         ListView<StringBuilder> peopleListView = new ListView<>(commands);
 
-        listViewListener(peopleListView);
+        listViewActionListener(peopleListView);
 
         return peopleListView;
     }
 
-    private void listViewListener(ListView<StringBuilder> peopleListView) {
+    private void listViewActionListener(ListView<StringBuilder> peopleListView) {
         peopleListView.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends StringBuilder> observable, StringBuilder oldValue, StringBuilder newValue) -> {
             StringBuilder method = new StringBuilder(newValue);
 

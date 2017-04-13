@@ -1,6 +1,5 @@
 package commands;
 
-import GUI.ReportWindow;
 import GUI.Storage;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

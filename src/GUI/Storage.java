@@ -7,6 +7,7 @@ import com.google.gson.reflect.TypeToken;
 import deprecated.Food;
 import deprecated.People;
 import deprecated.Place;
+import javafx.scene.control.Alert;
 import old.school.Botherable;
 import old.school.Chatable;
 import old.school.InterfaceAdapter;

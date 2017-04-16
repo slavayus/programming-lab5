@@ -1,5 +1,4 @@
-import GUI.*;
-
+import GUI.LoginWindow;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -15,7 +14,8 @@ public class lab5 extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
 
-        new Thread(new RegisterWindow(primaryStage)).run();
+        new Thread(new LoginWindow(primaryStage)).run();
+//    new Thread(new ConnectDB()).run();
     }
 
 }

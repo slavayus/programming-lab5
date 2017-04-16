@@ -43,7 +43,7 @@ public final class Storage implements Runnable {
         Gson gson = builder.create();
 
 
-        try (PrintWriter writeLog =new PrintWriter("./log")){
+        try (PrintWriter writeLog =new PrintWriter("./log.err")){
             StringBuilder data = new StringBuilder();
             try (FileReader reader = new FileReader("objects")) {
 //                System.out.println("YEE");

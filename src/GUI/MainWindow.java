@@ -17,7 +17,6 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
@@ -119,7 +118,7 @@ public class MainWindow implements Runnable {
         //HomeFileMenuItemListener
         homeFileMenuItem.setOnAction(event -> {
             mainWindow.close();
-            new Thread(new RegisterWindow(new Stage())).run();
+            new Thread(new LoginWindow(new Stage())).run();
         });
 
 

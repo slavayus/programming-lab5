@@ -89,7 +89,7 @@ public class LoginWindow implements Runnable {
             } else {
                 alertVersion("You have limited version");
             }
-//                    new DialogWindow().run();
+            new DialogWindow().run();
         } else {
             messageLabel.setText("Failed username or password");
         }
@@ -180,8 +180,6 @@ public class LoginWindow implements Runnable {
         register.setOnAction(event -> {
             Registerable registerAccount = new RegisterAccount();
             registerAccount.register();
-            primaryStage.close();
-            new LoginWindow(new Stage()).run();
         });
 
         accountHBox.getChildren().add(register);
@@ -198,8 +196,8 @@ public class LoginWindow implements Runnable {
 
         register.setOnAction(event -> {
             new RegisterFullVersion().register();
-            primaryStage.close();
-            new Thread(new LoginWindow(new Stage())).start();
+//            primaryStage.close();
+//            new Thread(new LoginWindow(new Stage())).start();
         });
 
         fullVersionHBox.getChildren().add(register);

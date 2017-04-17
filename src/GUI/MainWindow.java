@@ -43,11 +43,21 @@ public class MainWindow implements Runnable {
 
         peopleTree = new TreeView<>(getTreeForPeople());
         peopleTree.setEditable(true);
-        peopleTree.setCellFactory(param -> new TreeTextFieldEditor());
+        peopleTree.setCellFactory(TreeTextFieldEditor::new);
 
         peopleTree.setPrefWidth(10000);
         peopleTree.setStyle("-fx-background-color: #000000");
 
+//        peopleTree.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+//            for (People people : Storage.getInstanceOf().getFamily().values()) {
+//                if (oldValue.getValue().equals(people.getName())) {
+////                    Storage.getInstanceOf().getFamily().replace(Storage.getInstanceOf().getFamily().)
+//
+////                    new ShowAlert(Alert.AlertType.INFORMATION)
+//                }
+//
+//            }
+//        });
         HBox listViewHBox = new HBox(getAnchorPaneForListView(), peopleTree);
 
         VBox root = new VBox(getMenuBar(), listViewHBox);
@@ -63,8 +73,10 @@ public class MainWindow implements Runnable {
         family.setExpanded(true);
 
         if (Storage.getInstanceOf() != null) {
+
             TreeItem<String> nameItem;
             TreeItem<String> ageItem;
+//            nameItem.set
             for (People people : Storage.getInstanceOf().getFamily().values()) {
                 nameItem = new TreeItem<>(people.getName());
                 ageItem = new TreeItem<>(String.valueOf(people.getAge()));

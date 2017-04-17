@@ -3,10 +3,16 @@ package commands;
 import GUI.Storage;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TreeCell;
+import javafx.scene.control.TreeView;
 import javafx.scene.input.KeyCode;
 
 public class TreeTextFieldEditor extends TreeCell<String> {
     private TextField textField;
+    private TreeView<String> tree;
+
+    public TreeTextFieldEditor(TreeView<String> tree) {
+        this.tree = tree;
+    }
 
     @Override
     public void cancelEdit() {
@@ -19,18 +25,8 @@ public class TreeTextFieldEditor extends TreeCell<String> {
         if (textField == null)
             createTextField();
         setText(null);
+        setGraphic(textField);
         textField.selectAll();
-//        getTreeItem().setValue("kfj");
-        if(!getTreeItem().getChildren().isEmpty()){
-            try {
-                if(Integer.parseInt(textField.getText())>0){
-                    setGraphic(textField);
-                    textField.selectAll();
-                }
-            }catch (NumberFormatException ex){
-                cancelEdit();
-            }
-        }
     }
 
     private void createTextField() {

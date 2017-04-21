@@ -1,5 +1,6 @@
 package commands;
 
+import GUI.Container;
 import GUI.MainWindow;
 import GUI.NoFileSelected;
 import GUI.Storage;
@@ -34,7 +35,7 @@ public class ImportObjects{
      * @param path Ожидатеся имя файла или путь к файлу, содержащий коллекцию {@link Storage#family}
      * @version 2.0
      */
-    public void importAllFromFile(TreeView<String> peopleTree) {
+    public void importAllFromFile(TreeView<Container> peopleTree) {
         FileChooser fileChooser = new FileChooser();
         File selectedFile = fileChooser.showOpenDialog(null);
 
@@ -49,7 +50,7 @@ public class ImportObjects{
         }
     }
 
-    private void readFromFile(File selectedFile, TreeView<String> peopleTree){
+    private void readFromFile(File selectedFile, TreeView<Container> peopleTree){
         GsonBuilder builder = new GsonBuilder();
         builder.registerTypeAdapter(Missable.class, new InterfaceAdapter<People>());
         builder.registerTypeAdapter(Chatable.class, new InterfaceAdapter<People>());

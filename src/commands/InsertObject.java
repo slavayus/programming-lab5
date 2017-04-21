@@ -1,5 +1,6 @@
 package commands;
 
+import GUI.Container;
 import GUI.MainWindow;
 import GUI.Storage;
 import com.google.gson.Gson;
@@ -30,7 +31,7 @@ public class InsertObject {
      * @param string Экземплят типа {@link People} для добавления в коллекцию.
      * @version 2.0
      */
-    public void insertNewObject(TreeView<String> peopleTree) {
+    public void insertNewObject(TreeView<Container> peopleTree) {
         if (dataStage == null) {
             readKeyAndObject(peopleTree);
         } else {
@@ -39,7 +40,7 @@ public class InsertObject {
     }
 
 
-    private void readKeyAndObject(TreeView<String> peopleTree) {
+    private void readKeyAndObject(TreeView<Container> peopleTree) {
         dataStage = new Stage();
 
 
@@ -81,7 +82,7 @@ public class InsertObject {
         dataStage.setOnCloseRequest(event -> dataStage = null);
     }
 
-    private void insertToCollection(TreeView<String> peopleTree, TextField objectTextField, TextField keyTextField) {
+    private void insertToCollection(TreeView<Container> peopleTree, TextField objectTextField, TextField keyTextField) {
         String object = objectTextField.getText();
         String key = keyTextField.getText();
 

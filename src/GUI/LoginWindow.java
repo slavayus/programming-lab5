@@ -17,6 +17,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -163,9 +164,11 @@ public class LoginWindow implements Runnable {
         welcomeLabel.setPadding(new Insets(20, 0, 0, 0));
 
 
-        Image image = new Image("./images/register/signup.jpg");
+        URL resource = LoginWindow.class.getResource("/images/register/signup.jpg");
+        String path = resource.toExternalForm();
+        System.out.println(path);
+        Image image = new Image(path);
         ImageView imageView = new ImageView(image);
-
         welcomeHBox.getChildren().addAll(welcomeLabel, imageView);
         return welcomeHBox;
     }

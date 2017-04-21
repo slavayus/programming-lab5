@@ -1,5 +1,6 @@
 package commands;
 
+import GUI.Container;
 import GUI.MainWindow;
 import GUI.Storage;
 import com.google.gson.Gson;
@@ -42,7 +43,7 @@ public class RemoveObject {
      * @param peopleTree
      * @version 2.0
      */
-    public void removeGreaterKey(TreeView<String> peopleTree) {
+    public void removeGreaterKey(TreeView<Container> peopleTree) {
         if (dataStage == null) {
             readDataFromTextField("Key");
         } else {
@@ -65,7 +66,7 @@ public class RemoveObject {
      * @param key Ключ - строковая переменная определенного объекта, который лежит в коллекции {@link Storage#family}
      * @version 2.0
      */
-    public void removeWithKey(TreeView<String> peopleTree) {
+    public void removeWithKey(TreeView<Container> peopleTree) {
         if (dataStage == null) {
             readDataFromTextField("Key");
         } else {
@@ -90,7 +91,7 @@ public class RemoveObject {
      * @version 2.0
      * @since 1.0
      */
-    public void removeGreater(TreeView<String> peopleTree) {
+    public void removeGreater(TreeView<Container> peopleTree) {
         if (dataStage == null) {
             readDataFromTextField("Object in Json");
         } else {
@@ -115,7 +116,7 @@ public class RemoveObject {
      * @version 2.0
      * @since 1.0
      */
-    public void removeAll(TreeView<String> peopleTree) {
+    public void removeAll(TreeView<Container> peopleTree) {
         if (dataStage == null) {
             readDataFromTextField("Object in Json");
         } else {
@@ -143,7 +144,7 @@ public class RemoveObject {
      * @version 2.0
      * @since 1.0
      */
-    public void removeLowerObject(TreeView<String> peopleTree) {
+    public void removeLowerObject(TreeView<Container> peopleTree) {
         if (dataStage == null) {
             readDataFromTextField("Object in Json");
         } else {
@@ -169,7 +170,7 @@ public class RemoveObject {
      * @param peopleTree
      * @version 1.0
      */
-    public void removeLowerKey(TreeView<String> peopleTree) {
+    public void removeLowerKey(TreeView<Container> peopleTree) {
         if (dataStage == null) {
             readDataFromTextField("Key");
         } else {
@@ -212,7 +213,7 @@ public class RemoveObject {
         dataStage.setOnCloseRequest(event -> dataStage = null);
     }
 
-    private void removeFromCollectionWithKey(Predicate<Map.Entry<String, People>> predicate, TreeView<String> peopleTree, TextField textField) {
+    private void removeFromCollectionWithKey(Predicate<Map.Entry<String, People>> predicate, TreeView<Container> peopleTree, TextField textField) {
         this.data = textField.getText();
         dataStage.close();
         dataStage = null;
@@ -224,7 +225,7 @@ public class RemoveObject {
     }
 
 
-    private void removeFromCollectionWithObject(Predicate<Map.Entry<String, People>> predicate, TreeView<String> peopleTree, TextField textField) {
+    private void removeFromCollectionWithObject(Predicate<Map.Entry<String, People>> predicate, TreeView<Container> peopleTree, TextField textField) {
         this.data = textField.getText();
         dataStage.close();
         dataStage = null;

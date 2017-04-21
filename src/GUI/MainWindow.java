@@ -21,13 +21,14 @@ import javafx.stage.Stage;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
+import java.util.Map;
 
 /**
  * Created by slavik on 01.04.17.
  */
 public class MainWindow implements Runnable {
     private Stage mainWindow = new Stage();
-    private TreeView<String> peopleTree;
+    private TreeView<Container> peopleTree;
     private RemoveObject removeObject = new RemoveObject();
     private AddObjects addObjects = new AddObjects();
     private ImportObjects importObjects = new ImportObjects();
@@ -44,6 +45,7 @@ public class MainWindow implements Runnable {
         peopleTree = new TreeView<>(getTreeForPeople());
         peopleTree.setEditable(true);
         peopleTree.setCellFactory(TreeTextFieldEditor::new);
+
 
         peopleTree.setPrefWidth(10000);
         peopleTree.setStyle("-fx-background-color: #000000");
@@ -68,18 +70,16 @@ public class MainWindow implements Runnable {
         mainWindow.show();
     }
 
-    public static TreeItem<String> getTreeForPeople() {
-        TreeItem<String> family = new TreeItem<>("Family");
+    public static TreeItem<Container> getTreeForPeople() {
+        TreeItem<Container> family = new TreeItem<>(new Container(null,"Family", ContainerType.COLLECTION));
         family.setExpanded(true);
 
         if (Storage.getInstanceOf() != null) {
-
-            TreeItem<String> nameItem;
-            TreeItem<String> ageItem;
-//            nameItem.set
-            for (People people : Storage.getInstanceOf().getFamily().values()) {
-                nameItem = new TreeItem<>(people.getName());
-                ageItem = new TreeItem<>(String.valueOf(people.getAge()));
+            TreeItem<Container> nameItem;
+            TreeItem<Container> ageItem;
+            for (Map.Entry<String, People> entry : Storage.getInstanceOf().getFamily().entrySet()) {
+                nameItem = new TreeItem<>(new Container(entry.getKey(), entry.getValue().getName(),ContainerType.ELEMENT));
+                ageItem = new TreeItem<>(new Container(entry.getKey(), String.valueOf(entry.getValue().getAge()),ContainerType.AGE));
                 nameItem.getChildren().add(ageItem);
                 family.getChildren().add(nameItem);
             }

@@ -37,7 +37,7 @@ public class AddObjects {
      * @param peopleTree
      * @version 2.0
      */
-    public void addIfMax(TreeView<String> peopleTree) {
+    public void addIfMax(TreeView<Container> peopleTree) {
         if (dataStage == null) {
             readDataFromTextField(1, peopleTree);
         } else {
@@ -53,7 +53,7 @@ public class AddObjects {
      * @param peopleTree
      * @version 2.0
      */
-    public void addIfMin(TreeView<String> peopleTree) {
+    public void addIfMin(TreeView<Container> peopleTree) {
         if (dataStage == null) {
             readDataFromTextField(2, peopleTree);
         } else {
@@ -61,7 +61,7 @@ public class AddObjects {
         }
     }
 
-    private void readDataFromTextField(int min, TreeView<String> peopleTree) {
+    private void readDataFromTextField(int min, TreeView<Container> peopleTree) {
         dataStage = new Stage();
 
 
@@ -96,7 +96,7 @@ public class AddObjects {
         dataStage.setOnCloseRequest(event -> dataStage = null);
     }
 
-    private void addToCollection(int min, TreeView<String> peopleTree, TextField keyTextField) {
+    private void addToCollection(int min, TreeView<Container> peopleTree, TextField keyTextField) {
         String data = keyTextField.getText();
         try {
             People people = gson.fromJson(data, People.class);

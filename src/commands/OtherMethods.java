@@ -1,5 +1,6 @@
 package commands;
 
+import GUI.Container;
 import GUI.MainWindow;
 import GUI.Storage;
 import deprecated.People;
@@ -22,7 +23,7 @@ public class OtherMethods {
      * @version 1.0
      * @since 1.0
      */
-    public void clear(TreeView<String> peopleTree) {
+    public void clear(TreeView<Container> peopleTree) {
         int size = Storage.getInstanceOf().getFamily().size();
         Storage.getInstanceOf().getFamily().clear();
         new ShowAlert(Alert.AlertType.INFORMATION, "Done", "Коллекция очищена. \nУдалено " + size + " объектов");
@@ -40,7 +41,7 @@ public class OtherMethods {
         new ShowAlert(Alert.AlertType.INFORMATION, "Done", "Коллекция 'family' будет сохранена в файл: \nobjects");
     }
 
-    public void loadDefaultObjects(TreeView<String> peopleTree) {
+    public void loadDefaultObjects(TreeView<Container> peopleTree) {
         People x = new People();
 
         for (int i = 0; i < Storage.getInstanceOf().getАllPlaces(); i++) {

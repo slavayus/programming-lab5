@@ -70,7 +70,7 @@ public class ParseCSV {
 
         try {
             people = new People(object[0]);
-            people.setAge(Integer.parseInt(object[1]));
+            people.setAge((byte) Integer.parseInt(object[1]));
             state = true;
         } catch (IndexOutOfBoundsException ex) {
             printWriter.printf("Не удалось распознать объект в строке %d, у человека должно быть хотябы имя и возраст \n", count);

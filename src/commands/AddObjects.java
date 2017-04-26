@@ -24,7 +24,6 @@ import javafx.stage.Stage;
 
 public class AddObjects {
     private static Gson gson = new GsonBuilder().create();
-    private static PrintWriter printWriter = new PrintWriter(System.out, true);
     private Stage dataStage = null;
     private TextField keyTextField = new TextField();
 
@@ -33,9 +32,8 @@ public class AddObjects {
      * Команда: add_if_max.
      * Добавляет новый элемент в коллекцию, если его значение превышает значение наибольшего элемента этой коллекции.
      *
-     * @param object     Экземплят типа {@link People} для добавления в коллекцию.
-     * @param peopleTree
-     * @version 2.0
+     * @param peopleTree Ожидается TreeView<Container> для изменения содержимого
+     * @version 3.0
      */
     public void addIfMax(TreeView<Container> peopleTree) {
         if (dataStage == null) {
@@ -49,8 +47,7 @@ public class AddObjects {
      * Команда add_if_min.
      * Добавляет новый элемент в коллекцию, если его значение меньше, чем у наименьшего элемента этой коллекции.
      *
-     * @param object     Ожидается конкретный экземпляр класса {@link People}
-     * @param peopleTree
+     * @param peopleTree Ожидается TreeView<Container> для изменения содержимого
      * @version 2.0
      */
     public void addIfMin(TreeView<Container> peopleTree) {

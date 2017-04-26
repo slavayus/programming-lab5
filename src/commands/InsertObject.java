@@ -28,8 +28,8 @@ public class InsertObject {
      * Команда insert.
      * Добавляет новый элемент с заданным ключом.
      *
-     * @param string Экземплят типа {@link People} для добавления в коллекцию.
-     * @version 2.0
+     * @param peopleTree Ожидается TreeView<Container> для изменения содержимого
+     * @version 3.0
      */
     public void insertNewObject(TreeView<Container> peopleTree) {
         if (dataStage == null) {

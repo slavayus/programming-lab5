@@ -32,8 +32,8 @@ public class ImportObjects{
      * Команда import.
      * добавляет в коллекцию все данные из файла.
      *
-     * @param path Ожидатеся имя файла или путь к файлу, содержащий коллекцию {@link Storage#family}
-     * @version 2.0
+     * @param peopleTree Ожидается TreeView<Container> для изменения содержимого
+     * @version 3.0
      */
     public void importAllFromFile(TreeView<Container> peopleTree) {
         FileChooser fileChooser = new FileChooser();

@@ -90,7 +90,7 @@ public class LoginWindow implements Runnable {
             } else {
                 alertVersion("You have limited version");
             }
-            new DialogWindow().run();
+            new MainWindow().run();
         } else {
             messageLabel.setText("Failed username or password");
         }

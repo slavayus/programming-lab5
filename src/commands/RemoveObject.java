@@ -38,10 +38,8 @@ public class RemoveObject {
      * Команда: remove_greater_key.
      * Удаляет из коллекции все элементы, ключ которых превышает заданный.
      *
-     * @param key        Ключ определенного объекта, который лежит в коллекции {@link Storage#family}.
-     *                   Ожидается формат {String}
-     * @param peopleTree
-     * @version 2.0
+     * @param peopleTree Ожидается TreeView<Container> для изменения содержимого
+     * @version 3.0
      */
     public void removeGreaterKey(TreeView<Container> peopleTree) {
         if (dataStage == null) {
@@ -63,8 +61,8 @@ public class RemoveObject {
      * Команда remove.
      * Удаляет элемент из коллекции по его ключу.
      *
-     * @param key Ключ - строковая переменная определенного объекта, который лежит в коллекции {@link Storage#family}
-     * @version 2.0
+     * @param peopleTree Ожидается TreeView<Container> для изменения содержимого
+     * @version 3.0
      */
     public void removeWithKey(TreeView<Container> peopleTree) {
         if (dataStage == null) {
@@ -87,13 +85,13 @@ public class RemoveObject {
      * Команда remove_greater.
      * Удаляет из коллекции все элементы, превышающие заданный.
      *
-     * @param object Ожидается строка формата json для преобразования в объект {@link People}.
-     * @version 2.0
+     * @param peopleTree Ожидается TreeView<Container> для изменения содержимого
+     * @version 3.0
      * @since 1.0
      */
     public void removeGreater(TreeView<Container> peopleTree) {
         if (dataStage == null) {
-            readDataFromTextField("Object in Json");
+            readDataFromTextField("{name=\"name\";age=1}");
         } else {
             dataStage.toFront();
         }
@@ -112,13 +110,13 @@ public class RemoveObject {
      * Команда remove_all.
      * Удалят из коллекции все элементы, эквивалентные заданному.
      *
-     * @param object Ожидается строка формата json для преобразования в объект {@link People}
-     * @version 2.0
+     * @param peopleTree Ожидается TreeView<Container> для изменения содержимого
+     * @version 3.0
      * @since 1.0
      */
     public void removeAll(TreeView<Container> peopleTree) {
         if (dataStage == null) {
-            readDataFromTextField("Object in Json");
+            readDataFromTextField("{name=\"name\";age=1}");
         } else {
             dataStage.toFront();
         }
@@ -137,16 +135,13 @@ public class RemoveObject {
      * Команда remove_lower.
      * Удаляет из коллекции все элементы, меньшие, чем заданный.
      *
-     * @param object     Ожидается строка формата json для преобразования в конкретный экземпляр класса {@link People}
-     * @param data
-     * @param peopleTree
-     * @return boolean Сигнал об успешном распозновании объекта.
-     * @version 2.0
+     * @param peopleTree Ожидается TreeView<Container> для изменения содержимого
+     * @version 3.0
      * @since 1.0
      */
     public void removeLowerObject(TreeView<Container> peopleTree) {
         if (dataStage == null) {
-            readDataFromTextField("Object in Json");
+            readDataFromTextField("{name=\"name\";age=1}");
         } else {
             dataStage.toFront();
         }
@@ -165,9 +160,7 @@ public class RemoveObject {
      * Команда remove_lower.
      * Удаляет из коллекции все элементы, ключ которых меньше, чем заданный.
      *
-     * @param key        Ожидается ключ для коллекции {@link Storage#family}.
-     * @param data
-     * @param peopleTree
+     * @param peopleTree Ожидается TreeView<Container> для изменения содержимого
      * @version 1.0
      */
     public void removeLowerKey(TreeView<Container> peopleTree) {
@@ -235,11 +228,11 @@ public class RemoveObject {
             int size = Storage.getInstanceOf().getFamily().size();
             Storage.getInstanceOf().getFamily().entrySet().removeIf(predicate);
             peopleTree.setRoot(MainWindow.getTreeForPeople());
-            new ShowAlert(Alert.AlertType.INFORMATION, "Done","Операция выполнена успешно. \nУдалено " + (size - Storage.getInstanceOf().getFamily().size()) + " объекта.");
+            new ShowAlert(Alert.AlertType.INFORMATION, "Done", "Операция выполнена успешно. \nУдалено " + (size - Storage.getInstanceOf().getFamily().size()) + " объекта.");
         } catch (JsonSyntaxException ex) {
             new ShowAlert(Alert.AlertType.ERROR, "Error", "Не удалось распознать объект, \nпроверьте корректность данных");
-        }catch(NullPointerException ex){
-            new ShowAlert(Alert.AlertType.ERROR,"Error", "Не ввели данные об объекте\n ");
+        } catch (NullPointerException ex) {
+            new ShowAlert(Alert.AlertType.ERROR, "Error", "Не ввели данные об объекте\n ");
         }
     }
 

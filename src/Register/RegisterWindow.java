@@ -1,6 +1,9 @@
 package Register;
 
+import com.sun.org.apache.regexp.internal.RE;
+
 import java.io.*;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -15,7 +18,8 @@ public class RegisterWindow {
 
     {
         Properties runProperties = new Properties();
-        try (FileInputStream runFileProperties = new FileInputStream("properties/data.properties")) {
+        try (FileInputStream runFileProperties =
+                     new FileInputStream(RegisterWindow.class.getResource("/properties/data.properties").getFile())) {
             runProperties.load(runFileProperties);
             fileNameLimitedEdition = runProperties.getProperty("limitedEdition.file");
             fileNameFullVersion = runProperties.getProperty("fullEdition.file");
@@ -46,7 +50,7 @@ public class RegisterWindow {
 
 
     protected void saveToFile(String fileName) {
-        Properties runProperties = getProperties("properties/run.properties");
+        Properties runProperties = getProperties(RegisterWindow.class.getResource("/properties/run.properties").getFile());
         try (PrintWriter errorWriter = new PrintWriter(runProperties.getProperty("file.err"))) {
             try (BufferedWriter dataWriter = new BufferedWriter(new FileWriter(fileName, true))) {
 
@@ -65,7 +69,7 @@ public class RegisterWindow {
     }
 
     public boolean hasAccount(String fileName) {
-        Properties runProperties = getProperties("properties/run.properties");
+        Properties runProperties = getProperties(RegisterWindow.class.getResource("/properties/run.properties").getFile());
         try (PrintWriter errorWriter = new PrintWriter(runProperties.getProperty("file.err"))) {
             try (BufferedReader dataFile = new BufferedReader(new FileReader(fileName))) {
 

@@ -19,8 +19,8 @@ public class OtherMethods {
     /**
      * Команда clear.
      * Очищает коллекцию.
-     *
-     * @version 1.0
+     *@param peopleTree Ожидается TreeView<Container> для изменения содержимого
+     * @version 3.0
      * @since 1.0
      */
     public void clear(TreeView<Container> peopleTree) {
@@ -34,13 +34,20 @@ public class OtherMethods {
      * Команда save.
      * Сохраняет весь объект типа {@link Storage} в файл.
      *
-     * @version 1.0
+     * @version 3.0
      */
     public void save() {
         new Thread(new SaveDataToFile()).start();
         new ShowAlert(Alert.AlertType.INFORMATION, "Done", "Коллекция 'family' будет сохранена в файл: \nobjects");
     }
 
+    /**
+     * Команда load.
+     * Загружает дефолтные объекты типа {@link Storage} данные в коллекцию.
+     *
+     *@param peopleTree Ожидается TreeView<Container> для изменения содержимого
+     * @version 3.0
+     */
     public void loadDefaultObjects(TreeView<Container> peopleTree) {
         People x = new People();
 

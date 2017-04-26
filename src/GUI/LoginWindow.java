@@ -32,7 +32,8 @@ public class LoginWindow implements Runnable {
     private VBox rootVBox = new VBox();
     private HBox rootHBox = new HBox();
     private Label messageLabel = new Label();
-    private boolean fullVersion;
+    private Version version = Version.LIMITED;
+    private Registerable registerFullVersion = new RegisterFullVersion();
 
     public LoginWindow(Stage primaryStage) {
         this.primaryStage = primaryStage;
@@ -85,12 +86,12 @@ public class LoginWindow implements Runnable {
     private void submitButtonListener() {
         if (checkInputData()) {
             primaryStage.close();
-            if (fullVersion) {
+            if (Version.FULL ==version) {
                 alertVersion("You have full version");
             } else {
                 alertVersion("You have limited version");
             }
-            new MainWindow().run();
+            new MainWindow(version).showWindow();
         } else {
             messageLabel.setText("Failed username or password");
         }
@@ -111,7 +112,7 @@ public class LoginWindow implements Runnable {
         data.add(userPasswordField.getText());
         if (registerWindow.setData(data)) {
             if (registerWindow.hasAccount(registerWindow.getFileNameFullVersion())) {
-                fullVersion = true;
+                version=Version.FULL;
                 return true;
             } else {
                 return registerWindow.hasAccount(registerWindow.getFileNameLimitedEdition());
@@ -166,7 +167,7 @@ public class LoginWindow implements Runnable {
 
         URL resource = LoginWindow.class.getResource("/images/register/signup.jpg");
         String path = resource.toExternalForm();
-        System.out.println(path);
+//        System.out.println(path);
         Image image = new Image(path);
         ImageView imageView = new ImageView(image);
         welcomeHBox.getChildren().addAll(welcomeLabel, imageView);
@@ -198,9 +199,10 @@ public class LoginWindow implements Runnable {
         Hyperlink register = new Hyperlink("Want to get the full version?");
 
         register.setOnAction(event -> {
-            new RegisterFullVersion().register();
-//            primaryStage.close();
-//            new Thread(new LoginWindow(new Stage())).start();
+            if(((RegisterFullVersion)registerFullVersion).getDialogStage()==null){
+                ((RegisterFullVersion)registerFullVersion).setDialogStage(new Stage());
+            }
+            registerFullVersion.register();
         });
 
         fullVersionHBox.getChildren().add(register);

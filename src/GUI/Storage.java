@@ -42,11 +42,16 @@ public final class Storage implements Runnable {
         builder.registerTypeAdapter(Botherable.class, new InterfaceAdapter<People>());
         Gson gson = builder.create();
 
+        Properties runProperties = new Properties();
+        try {
+            runProperties.load(Storage.class.getResourceAsStream("/properties/run.properties"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-        try (PrintWriter writeLog =new PrintWriter("./log.err")){
+        try (PrintWriter writeLog =new PrintWriter(runProperties.getProperty("file.err"))){
             StringBuilder data = new StringBuilder();
             try (FileReader reader = new FileReader("objects")) {
-//                System.out.println("YEE");
                 int c;
                 while ((c = reader.read()) != -1) {
                     data.append((char)c);
@@ -65,8 +70,6 @@ public final class Storage implements Runnable {
             }
         } catch (FileNotFoundException e) {
             //doNothing();
-            System.out.println("YEEE");
-
         }
     }
 

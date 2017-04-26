@@ -3,10 +3,10 @@ package GUI;
 /**
  * Created by slavik on 08.04.17.
  */
-public class NoFileSelected extends Throwable{
+public class NoFileSelectedExceprion extends Throwable{
     private String msg;
 
-    public NoFileSelected(String msg){
+    public NoFileSelectedExceprion(String msg){
         this.msg = msg;
     }
 

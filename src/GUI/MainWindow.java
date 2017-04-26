@@ -26,7 +26,7 @@ import java.util.Map;
 /**
  * Created by slavik on 01.04.17.
  */
-public class MainWindow implements Runnable {
+public class MainWindow {
     private Stage mainWindow = new Stage();
     private TreeView<Container> peopleTree;
     private RemoveObject removeObject = new RemoveObject();
@@ -35,15 +35,20 @@ public class MainWindow implements Runnable {
     private InsertObject insertObject = new InsertObject();
     private static final Date currentDate = new Date();
     private final OtherMethods otherMethods = new OtherMethods();
+    private Version version;
 
-    @Override
-    public void run() {
-//        new Thread(Storage.getInstanceOf()).start();
-//        Thread.sleep(1000);
-        Storage.getInstanceOf().run();
+
+    public MainWindow(Version version) {
+        this.version = version;
+    }
+
+    void showWindow() {
+        new Thread(Storage.getInstanceOf()).start();
 
         peopleTree = new TreeView<>(getTreeForPeople());
-        peopleTree.setEditable(true);
+        if (version == Version.FULL) {
+            peopleTree.setEditable(true);
+        }
         peopleTree.setCellFactory(TreeTextFieldEditor::new);
 
 
@@ -61,15 +66,15 @@ public class MainWindow implements Runnable {
     }
 
     public static TreeItem<Container> getTreeForPeople() {
-        TreeItem<Container> family = new TreeItem<>(new Container(null,"Family", ContainerType.COLLECTION));
+        TreeItem<Container> family = new TreeItem<>(new Container(null, "Family", ContainerType.COLLECTION));
         family.setExpanded(true);
 
         if (Storage.getInstanceOf() != null) {
             TreeItem<Container> nameItem;
             TreeItem<Container> ageItem;
             for (Map.Entry<String, People> entry : Storage.getInstanceOf().getFamily().entrySet()) {
-                nameItem = new TreeItem<>(new Container(entry.getKey(), entry.getValue().getName(),ContainerType.ELEMENT));
-                ageItem = new TreeItem<>(new Container(entry.getKey(), String.valueOf(entry.getValue().getAge()),ContainerType.AGE));
+                nameItem = new TreeItem<>(new Container(entry.getKey(), entry.getValue().getName(), ContainerType.ELEMENT));
+                ageItem = new TreeItem<>(new Container(entry.getKey(), String.valueOf(entry.getValue().getAge()), ContainerType.AGE));
                 nameItem.getChildren().add(ageItem);
                 family.getChildren().add(nameItem);
             }
@@ -120,7 +125,7 @@ public class MainWindow implements Runnable {
         //HomeFileMenuItemListener
         homeFileMenuItem.setOnAction(event -> {
             mainWindow.close();
-            new Thread(new LoginWindow(new Stage())).run();
+            new LoginWindow(new Stage()).run();
         });
 
 

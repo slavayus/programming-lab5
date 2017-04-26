@@ -2,7 +2,7 @@ package commands;
 
 import GUI.Container;
 import GUI.MainWindow;
-import GUI.NoFileSelected;
+import GUI.NoFileSelectedExceprion;
 import GUI.Storage;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -41,8 +41,8 @@ public class ImportObjects{
 
         if(selectedFile==null){
             try {
-                throw new NoFileSelected("Произошла ошибка, не был выбран файл\n ");
-            } catch (NoFileSelected noFileSelected) {
+                throw new NoFileSelectedExceprion("Произошла ошибка, не был выбран файл\n ");
+            } catch (NoFileSelectedExceprion noFileSelected) {
                 new ShowAlert(Alert.AlertType.ERROR, "Error", noFileSelected.getMessage());
             }
         }else {

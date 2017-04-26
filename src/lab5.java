@@ -14,8 +14,7 @@ public class lab5 extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
 
-        new Thread(new LoginWindow(primaryStage)).run();
-//    new Thread(new ConnectDB()).run();
+        new LoginWindow(primaryStage).run();
     }
 
 }

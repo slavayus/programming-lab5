@@ -1,9 +1,7 @@
 package Register;
 
-import com.sun.org.apache.regexp.internal.RE;
 
 import java.io.*;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -13,13 +11,12 @@ import java.util.Properties;
  */
 public class RegisterWindow {
     public List<String> data = new ArrayList<>();
-    protected String fileNameLimitedEdition;
-    protected String fileNameFullVersion;
+    String fileNameLimitedEdition;
+    String fileNameFullVersion;
 
     {
         Properties runProperties = new Properties();
-        try (FileInputStream runFileProperties =
-                     new FileInputStream(RegisterWindow.class.getResource("/properties/data.properties").getFile())) {
+        try (InputStream runFileProperties = RegisterWindow.class.getResourceAsStream("/properties/data.properties")) {
             runProperties.load(runFileProperties);
             fileNameLimitedEdition = runProperties.getProperty("limitedEdition.file");
             fileNameFullVersion = runProperties.getProperty("fullEdition.file");
@@ -50,7 +47,7 @@ public class RegisterWindow {
 
 
     protected void saveToFile(String fileName) {
-        Properties runProperties = getProperties(RegisterWindow.class.getResource("/properties/run.properties").getFile());
+        Properties runProperties = getProperties(RegisterWindow.class.getResourceAsStream("/properties/run.properties"));
         try (PrintWriter errorWriter = new PrintWriter(runProperties.getProperty("file.err"))) {
             try (BufferedWriter dataWriter = new BufferedWriter(new FileWriter(fileName, true))) {
 
@@ -62,17 +59,17 @@ public class RegisterWindow {
 
             } catch (IOException e) {
                 errorWriter.println(e.getMessage());
+                System.out.println(e.getMessage());
             }
         } catch (FileNotFoundException e) {
             //do nothing
         }
     }
 
-    public boolean hasAccount(String fileName) {
-        Properties runProperties = getProperties(RegisterWindow.class.getResource("/properties/run.properties").getFile());
+    public boolean hasAccount(String fileName)  {
+        Properties runProperties = getProperties(RegisterWindow.class.getResourceAsStream("/properties/run.properties"));
         try (PrintWriter errorWriter = new PrintWriter(runProperties.getProperty("file.err"))) {
             try (BufferedReader dataFile = new BufferedReader(new FileReader(fileName))) {
-
                 String dataFromFile;
                 while ((dataFromFile = dataFile.readLine()) != null) {
                     String[] list = dataFromFile.split(" ");
@@ -98,11 +95,11 @@ public class RegisterWindow {
         return false;
     }
 
-    private Properties getProperties(String query) {
+    private Properties getProperties(InputStream file) {
         Properties properties = new Properties();
 
-        try (FileInputStream runFileProperties = new FileInputStream(query)) {
-            properties.load(runFileProperties);
+        try {
+            properties.load(file);
         } catch (IOException e) {
             //do nothing
         }

@@ -16,12 +16,13 @@ import old.school.Missable;
 import java.io.*;
 import java.lang.reflect.Type;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by slavik on 19.02.17.
  */
 public final class Storage implements Runnable {
-    private Map<String, People> family = new LinkedHashMap<>();
+    private Map<String, People> family = new ConcurrentHashMap<>();
     private final int аllPlaces = 15;
     private Map<Integer, People> familyOfChild = new LinkedHashMap<>();
     private List<Place> places = new ArrayList<>();

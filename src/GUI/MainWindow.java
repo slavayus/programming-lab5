@@ -43,7 +43,13 @@ public class MainWindow {
     }
 
     void showWindow() {
-        new Thread(Storage.getInstanceOf()).start();
+        Thread loadThread = new Thread(Storage.getInstanceOf());
+        loadThread.start();
+        try {
+            loadThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         peopleTree = new TreeView<>(getTreeForPeople());
         if (version == Version.FULL) {

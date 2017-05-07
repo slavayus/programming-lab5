@@ -1,7 +1,6 @@
 package old.school;
 
 import GUI.Storage;
-import deprecated.People;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;

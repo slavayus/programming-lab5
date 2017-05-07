@@ -1,18 +1,20 @@
 package old.school;
 
+import java.io.Serializable;
+
 /**
  * Created by slavik on 30.10.16.
  */
-public abstract class Man {
+public abstract class Man implements Serializable{
     protected String name;
-    protected byte age;
+    protected int age;
+    private static final long serialVersionUID =2;
 
-    protected Man(String name) {
+    public Man(String name) {
         setName(name);
     }
 
-    protected Man() {
-
+    public Man() {
     }
 
     public boolean setName(String name) {
@@ -32,7 +34,7 @@ public abstract class Man {
         return name;
     }
 
-    public boolean setAge(byte age) {
+    public boolean setAge(int age) {
         if(age<0){
             return false;
         }

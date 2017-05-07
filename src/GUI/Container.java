@@ -1,7 +1,5 @@
 package GUI;
 
-import deprecated.People;
-
 /**
  * Created by slavik on 17.04.17.
  */

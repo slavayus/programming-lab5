@@ -1,7 +1,8 @@
 package GUI;
 
 import commands.*;
-import deprecated.People;
+import old.school.Man;
+import old.school.People;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -48,7 +49,7 @@ public class MainWindow {
         try {
             loadThread.join();
         } catch (InterruptedException e) {
-            e.printStackTrace();
+//            e.printStackTrace();
         }
 
         peopleTree = new TreeView<>(getTreeForPeople());
@@ -78,7 +79,7 @@ public class MainWindow {
         if (Storage.getInstanceOf() != null) {
             TreeItem<Container> nameItem;
             TreeItem<Container> ageItem;
-            for (Map.Entry<String, People> entry : Storage.getInstanceOf().getFamily().entrySet()) {
+            for (Map.Entry<String, Man> entry : Storage.getInstanceOf().getFamily().entrySet()) {
                 nameItem = new TreeItem<>(new Container(entry.getKey(), entry.getValue().getName(), ContainerType.ELEMENT));
                 ageItem = new TreeItem<>(new Container(entry.getKey(), String.valueOf(entry.getValue().getAge()), ContainerType.AGE));
                 nameItem.getChildren().add(ageItem);

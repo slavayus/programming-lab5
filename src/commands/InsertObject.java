@@ -6,7 +6,10 @@ import GUI.Storage;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
-import deprecated.People;
+import connectServer.ClientLoad;
+import connectServer.MessageFromClient;
+import old.school.Man;
+import old.school.People;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -16,6 +19,10 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
+
+import java.net.SocketException;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Created by slavik on 08.04.17.
@@ -88,16 +95,29 @@ public class InsertObject {
 
         try {
             People people = gson.fromJson(object, People.class);
-            if (people == null) {
+            if (people == null || people.getAge() < 0 || !people.setName(people.getName())) {
                 throw new NullPointerException();
             }
-            Storage.getInstanceOf().getFamily().put(key, people);
+
+            Map<String, Man> newData = new LinkedHashMap<>();
+            newData.put(key, people);
+
+            ClientLoad clientLoad = new ClientLoad();
+            clientLoad.send(newData, "INSERT_NEW_OBJECT");
+            MessageFromClient messageFromClient = clientLoad.readData();
+            Storage.getInstanceOf().setFamily(messageFromClient.getDataFromClient());
             peopleTree.setRoot(MainWindow.getTreeForPeople());
-            new ShowAlert(Alert.AlertType.INFORMATION, "Done", "\nОбъект успешно добавлен");
+            if(!messageFromClient.getClientCollectionState()){
+                new ShowAlert(Alert.AlertType.INFORMATION, "Done", "You had an old version of the collection. \nThe collection was updated.");
+            }
+            new ShowAlert(Alert.AlertType.INFORMATION, "Done", "\n" + messageFromClient.getMsg());
+
         } catch (NullPointerException ex) {
-            new ShowAlert(Alert.AlertType.ERROR,"Error", "Не ввели данные об объекте");
+            new ShowAlert(Alert.AlertType.ERROR, "Error", "Не верно введены данные об объекте");
         } catch (JsonSyntaxException ex) {
             new ShowAlert(Alert.AlertType.ERROR, "Error", "Не удалось распознать объект, \nпроверьте корректность данных");
+        } catch (SocketException e) {
+//            e.printStackTrace();
         }
         dataStage.close();
         dataStage = null;

@@ -1,5 +1,7 @@
 package deprecated;
 
+import old.school.People;
+
 /**
  * Created by slavik on 30.10.16.
  */

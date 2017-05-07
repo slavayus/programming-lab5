@@ -7,7 +7,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
-import deprecated.People;
+import old.school.People;
 import javafx.scene.control.TreeView;
 import old.school.Botherable;
 import old.school.Chatable;

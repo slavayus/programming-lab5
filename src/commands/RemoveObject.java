@@ -6,7 +6,8 @@ import GUI.Storage;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
-import deprecated.People;
+import old.school.Man;
+import old.school.People;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -206,7 +207,7 @@ public class RemoveObject {
         dataStage.setOnCloseRequest(event -> dataStage = null);
     }
 
-    private void removeFromCollectionWithKey(Predicate<Map.Entry<String, People>> predicate, TreeView<Container> peopleTree, TextField textField) {
+    private void removeFromCollectionWithKey(Predicate<Map.Entry<String, Man>> predicate, TreeView<Container> peopleTree, TextField textField) {
         this.data = textField.getText();
         dataStage.close();
         dataStage = null;
@@ -218,7 +219,7 @@ public class RemoveObject {
     }
 
 
-    private void removeFromCollectionWithObject(Predicate<Map.Entry<String, People>> predicate, TreeView<Container> peopleTree, TextField textField) {
+    private void removeFromCollectionWithObject(Predicate<Map.Entry<String, Man>> predicate, TreeView<Container> peopleTree, TextField textField) {
         this.data = textField.getText();
         dataStage.close();
         dataStage = null;

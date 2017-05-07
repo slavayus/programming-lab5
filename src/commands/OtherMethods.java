@@ -3,7 +3,7 @@ package commands;
 import GUI.Container;
 import GUI.MainWindow;
 import GUI.Storage;
-import deprecated.People;
+import old.school.People;
 import deprecated.Place;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TreeView;

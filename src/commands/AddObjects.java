@@ -1,13 +1,13 @@
 package commands;
 
+import GUI.Container;
+import GUI.MainWindow;
+import GUI.Storage;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
-
-import java.io.*;
-
-import GUI.*;
-import deprecated.People;
+import connectServer.ClientLoad;
+import connectServer.MessageFromClient;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -17,6 +17,12 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
+import old.school.Man;
+import old.school.People;
+
+import java.net.SocketException;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Created by slavik on 22.02.17.
@@ -37,7 +43,7 @@ public class AddObjects {
      */
     public void addIfMax(TreeView<Container> peopleTree) {
         if (dataStage == null) {
-            readDataFromTextField(1, peopleTree);
+            readDataFromTextField(false, peopleTree);
         } else {
             dataStage.toFront();
         }
@@ -52,13 +58,13 @@ public class AddObjects {
      */
     public void addIfMin(TreeView<Container> peopleTree) {
         if (dataStage == null) {
-            readDataFromTextField(2, peopleTree);
+            readDataFromTextField(true, peopleTree);
         } else {
             dataStage.toFront();
         }
     }
 
-    private void readDataFromTextField(int min, TreeView<Container> peopleTree) {
+    private void readDataFromTextField(boolean min, TreeView<Container> peopleTree) {
         dataStage = new Stage();
 
 
@@ -93,54 +99,38 @@ public class AddObjects {
         dataStage.setOnCloseRequest(event -> dataStage = null);
     }
 
-    private void addToCollection(int min, TreeView<Container> peopleTree, TextField keyTextField) {
+    private void addToCollection(boolean min, TreeView<Container> peopleTree, TextField keyTextField) {
         String data = keyTextField.getText();
         try {
             People people = gson.fromJson(data, People.class);
-            if (people == null) {
+
+            if (people == null || people.getAge() < 0 || !people.setName(people.getName())) {
                 throw new NullPointerException();
             }
 
-            boolean flag = true;
+            Map<String, Man> newData = new LinkedHashMap<>();
+            newData.put("0", people);
 
-            switch (min) {
-                case 1:
-                    for (People peopleCollection : Storage.getInstanceOf().getFamily().values()) {
-                        if (peopleCollection.getAge() > people.getAge()) {
-                            flag = false;
-                            break;
-                        }
-                    }
-                    break;
-                case 2:
-                    for (People peopleCollection : Storage.getInstanceOf().getFamily().values()) {
-                        if (peopleCollection.getAge() < people.getAge()) {
-                            flag = false;
-                            break;
-                        }
-                    }
-                    break;
-            }
-
-
-            if (flag) {
-                switch (min) {
-                    case 1: {
-                        Storage.getInstanceOf().getFamily().put(String.valueOf(Storage.getInstanceOf().getFamily().size()), people);
-                        break;
-                    }
-                    case 2: {
-                        Storage.getInstanceOf().getFamily().put(String.valueOf(Storage.getInstanceOf().getFamily().size()), people);
-                    }
-                }
-                new ShowAlert(Alert.AlertType.INFORMATION,"Done", "Объект успешно добавлен \n ");
+            ClientLoad clientLoad = new ClientLoad();
+            if (min) {
+                clientLoad.send(newData, "ADD_IF_MIN");
             } else {
-                new ShowAlert(Alert.AlertType.INFORMATION, "Done", "Объект не добавлен\n ");
+                clientLoad.send(newData, "ADD_IF_MAX");
             }
+            MessageFromClient messageFromClient = clientLoad.readData();
+            Storage.getInstanceOf().setFamily(messageFromClient.getDataFromClient());
+            peopleTree.setRoot(MainWindow.getTreeForPeople());
+            if (!messageFromClient.getClientCollectionState()) {
+                new ShowAlert(Alert.AlertType.INFORMATION, "Done", "You had an old version of the collection. \nThe collection was updated.");
+            }
+            new ShowAlert(Alert.AlertType.INFORMATION, "Done", "\n" + messageFromClient.getMsg());
+
         } catch (JsonSyntaxException ex) {
             new ShowAlert(Alert.AlertType.ERROR, "Error", "Не удалось распознать объект,\nпроверьте корректность данных");
         } catch (NullPointerException ex) {
-            new ShowAlert(Alert.AlertType.ERROR, "Error", "\nНе ввели данные об объекте");
+            new ShowAlert(Alert.AlertType.ERROR, "Error", "\nНе верно введены данные об объекте");
+        } catch (SocketException e) {
+//            e.printStackTrace();
         }
 
         peopleTree.setRoot(MainWindow.getTreeForPeople());

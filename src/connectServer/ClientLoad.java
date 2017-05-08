@@ -28,7 +28,7 @@ public class ClientLoad {
     public ClientLoad() throws IOException {
             clientSocket = new DatagramSocket();
             inetAddress = InetAddress.getLocalHost();
-            new Socket(inetAddress, port);
+//            new Socket(inetAddress, port);
     }
 
 

@@ -111,6 +111,11 @@ public class OtherMethods {
             MessageFromClient messageFromClient = clientLoad.readData();
             Storage.getInstanceOf().setFamily(messageFromClient.getDataFromClient());
             peopleTree.setRoot(MainWindow.getTreeForPeople());
+
+            if (!messageFromClient.getClientCollectionState()) {
+                new ShowAlert(Alert.AlertType.INFORMATION, "Done", "You had an old version of the collection. \nThe collection was updated.");
+            }
+
             new ShowAlert(Alert.AlertType.INFORMATION, "Done", "\n" + messageFromClient.getMsg() + "\n");
 
             peopleTree.setRoot(MainWindow.getTreeForPeople());

@@ -1,19 +1,31 @@
 package Register;
 
+import GUI.MainWindow;
+import GUI.Storage;
+import com.google.gson.JsonSyntaxException;
 import commands.ShowAlert;
+import connectServer.ClientLoad;
+import connectServer.MessageFromClient;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.util.Pair;
+import old.school.Man;
+import old.school.People;
+import old.school.User;
 
+import java.io.IOException;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 /**
  * Created by slavik on 13.04.17.
  */
-public class RegisterAccount extends RegisterWindow implements Registerable {
+public class RegisterLimitedVersion extends RegisterWindow implements Registerable {
     private boolean flagLogin = false;
     private boolean flagPassword = false;
 
@@ -80,23 +92,30 @@ public class RegisterAccount extends RegisterWindow implements Registerable {
                 data.clear();
                 dialog.close();
                 new ShowAlert(Alert.AlertType.ERROR, "Error", "Заполните все поля");
-                register();
+                RegisterLimitedVersion.this.register();
             } else {
-                if (hasAccount(fileNameLimitedEdition)) {
-                    data.clear();
-                    dialog.close();
-                    new ShowAlert(Alert.AlertType.ERROR, "Error", "Пользователь с такими данными \nуже существует");
-                    register();
-                } else {
-                    if (hasAccount(fileNameFullVersion)) {
-                        data.clear();
-                        dialog.close();
-                        new ShowAlert(Alert.AlertType.ERROR, "Error", "Пользователь с такими данными \nуже существует");
-                        register();
-                    } else {
-                        saveToFile(fileNameLimitedEdition);
-                        new ShowAlert(Alert.AlertType.INFORMATION, "Done", "Пользователь добавлен");
+
+                try {
+                    Map<String, Man> newData = new LinkedHashMap<>();
+                    newData.put(data.get(1), new User(data.get(0), 1));
+
+                    ClientLoad clientLoad = new ClientLoad();
+                    clientLoad.send(newData, "REGISTER");
+                    MessageFromClient messageFromClient = clientLoad.readData();
+
+                    switch (messageFromClient.getModifiedRow()) {
+                        case 0:
+                            data.clear();
+                            dialog.close();
+                            new ShowAlert(Alert.AlertType.INFORMATION, "Error", "\n" + messageFromClient.getMsg());
+                            RegisterLimitedVersion.this.register();
+                            break;
+                        case 1:
+                            new ShowAlert(Alert.AlertType.INFORMATION, "Done", "\n" + messageFromClient.getMsg());
+                            break;
                     }
+                } catch (IOException e) {
+                    new ShowAlert(Alert.AlertType.ERROR, "Error", "\nCould not connect to server");
                 }
             }
         });

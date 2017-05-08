@@ -1,9 +1,12 @@
 package GUI;
 
-import Register.RegisterAccount;
+import Register.RegisterLimitedVersion;
 import Register.RegisterFullVersion;
 import Register.RegisterWindow;
 import Register.Registerable;
+import commands.ShowAlert;
+import connectServer.ClientLoad;
+import connectServer.MessageFromClient;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -16,10 +19,15 @@ import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
+import old.school.Man;
+import old.school.User;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by slavik on 02.04.17.
@@ -86,7 +94,7 @@ public class LoginWindow implements Runnable {
     private void submitButtonListener() {
         if (checkInputData()) {
             primaryStage.close();
-            if (Version.FULL ==version) {
+            if (Version.FULL == version) {
                 alertVersion("You have full version");
             } else {
                 alertVersion("You have limited version");
@@ -106,18 +114,21 @@ public class LoginWindow implements Runnable {
     }
 
     private boolean checkInputData() {
-        RegisterWindow registerWindow = new RegisterWindow();
-        List<String> data = new ArrayList<>();
-        data.add(userNameTextField.getText());
-        data.add(userPasswordField.getText());
-        if (registerWindow.setData(data)) {
-            if (registerWindow.hasAccount(registerWindow.getFileNameFullVersion())) {
-                version=Version.FULL;
+        try {
+            Map<String, Man> newData = new LinkedHashMap<>();
+            newData.put(userPasswordField.getText(), new User(userNameTextField.getText(), 1));
+
+            ClientLoad clientLoad = new ClientLoad();
+            clientLoad.send(newData, "LOGIN");
+            MessageFromClient messageFromClient = clientLoad.readData();
+
+            if (messageFromClient.getModifiedRow() == 1) {
+                version = Boolean.parseBoolean(messageFromClient.getMsg()) ? Version.FULL : Version.LIMITED;
                 return true;
-            } else {
-                return registerWindow.hasAccount(registerWindow.getFileNameLimitedEdition());
             }
-        } else {
+            return false;
+        } catch (IOException e) {
+            new ShowAlert(Alert.AlertType.ERROR, "Error", "\nCould not connect to server");
             return false;
         }
     }
@@ -182,7 +193,7 @@ public class LoginWindow implements Runnable {
         Hyperlink register = new Hyperlink("Don't have an account?");
 
         register.setOnAction(event -> {
-            Registerable registerAccount = new RegisterAccount();
+            Registerable registerAccount = new RegisterLimitedVersion();
             registerAccount.register();
         });
 
@@ -199,8 +210,8 @@ public class LoginWindow implements Runnable {
         Hyperlink register = new Hyperlink("Want to get the full version?");
 
         register.setOnAction(event -> {
-            if(((RegisterFullVersion)registerFullVersion).getDialogStage()==null){
-                ((RegisterFullVersion)registerFullVersion).setDialogStage(new Stage());
+            if (((RegisterFullVersion) registerFullVersion).getDialogStage() == null) {
+                ((RegisterFullVersion) registerFullVersion).setDialogStage(new Stage());
             }
             registerFullVersion.register();
         });

@@ -2,21 +2,23 @@ package GUI;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
-import deprecated.Food;
+import commands.ShowAlert;
+import connectServer.ClientLoad;
+import connectServer.MessageFromClient;
+import javafx.scene.control.Alert;
+import javafx.scene.control.TreeView;
 import old.school.*;
 import deprecated.Place;
 
-import java.io.*;
-import java.lang.reflect.Type;
+import java.io.IOException;
+import java.net.SocketException;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by slavik on 19.02.17.
  */
-public final class Storage implements Runnable {
-    private Map<String, Man> family = new ConcurrentHashMap<>();
+public final class Storage {
+    private Map<String, Man> family = new LinkedHashMap<>();
     private final int аllPlaces = 15;
     private Map<Integer, People> familyOfChild = new LinkedHashMap<>();
     private List<Place> places = new ArrayList<>();
@@ -30,46 +32,28 @@ public final class Storage implements Runnable {
     private Storage() {
     }
 
-    public void run() {
+    void readFromDB(TreeView<Container> peopleTree) {
         GsonBuilder builder = new GsonBuilder();
         builder.registerTypeAdapter(Missable.class, new InterfaceAdapter<People>());
         builder.registerTypeAdapter(Chatable.class, new InterfaceAdapter<People>());
         builder.registerTypeAdapter(Botherable.class, new InterfaceAdapter<People>());
         Gson gson = builder.create();
 
-        Properties runProperties = new Properties();
-        try {
-            runProperties.load(Storage.class.getResourceAsStream("/properties/run.properties"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
-//        try (PrintWriter writeLog =new PrintWriter(runProperties.getProperty("file.err"))){
-        StringBuilder data = new StringBuilder();
-        try (FileReader reader = new FileReader("objects")) {
-            int c;
-            while ((c = reader.read()) != -1) {
-                data.append((char) c);
-            }
-            Type typeMap = new TypeToken<Map<String, People>>() {
-            }.getType();
-            Map<String, People> map = gson.fromJson(data.toString(), typeMap);
-            if (map == null)
-                throw new NullPointerException();
-            family.clear();
-            family.putAll(map);
-        } catch (Exception ex) {
-//                writeLog.write(ex.getMessage()+"\n");
-//                writeLog.close();
+        MessageFromClient messageFromClient = null;
+        try {
+            Map<String, Man> newData = new LinkedHashMap<>();
+            ClientLoad clientLoad = new ClientLoad();
+            clientLoad.send(newData, "READ");
+            messageFromClient = clientLoad.readData();
+            Storage.getInstanceOf().setFamily(messageFromClient.getDataFromClient());
+        } catch (IOException e) {
+            new ShowAlert(Alert.AlertType.ERROR, "Error", "\nCould not connect to server");
         }
-//        } catch (FileNotFoundException e) {
-//            doNothing();
-//    }
     }
 
 
-
-    public Map<Integer,People> getFamilyOfChild(){
+    public Map<Integer, People> getFamilyOfChild() {
         return familyOfChild;
     }
 
@@ -86,7 +70,7 @@ public final class Storage implements Runnable {
         return instanceOf;
     }
 
-    public  List<Place> getPlaces() {
+    public List<Place> getPlaces() {
         return places;
     }
 

@@ -2,12 +2,21 @@ package commands;
 
 import GUI.Container;
 import GUI.ContainerType;
+import GUI.MainWindow;
 import GUI.Storage;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TreeCell;
-import javafx.scene.control.TreeView;
+import com.google.gson.JsonSyntaxException;
+import connectServer.ClientLoad;
+import connectServer.MessageFromClient;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import old.school.Man;
+import old.school.People;
+
+import java.io.IOException;
+import java.net.SocketException;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class TreeTextFieldEditor extends TreeCell<Container> {
     private TextField textField;
@@ -20,14 +29,19 @@ public class TreeTextFieldEditor extends TreeCell<Container> {
     @Override
     public void cancelEdit() {
         super.cancelEdit();
+        setText(getString());
+        setGraphic(getTreeItem().getGraphic());
     }
 
     @Override
     public void startEdit() {
         super.startEdit();
-        if (textField == null)
+
+        if (textField == null) {
             createTextField();
+        }
         setText(null);
+        textField.setText(getString());
         setGraphic(textField);
         textField.selectAll();
     }
@@ -39,7 +53,34 @@ public class TreeTextFieldEditor extends TreeCell<Container> {
                 if (getItem().getType() == ContainerType.ELEMENT) {
                     commitEdit(getItem());
                     getItem().setValue(textField.getText());
-                    Storage.getInstanceOf().getFamily().get(getItem().getKey()).setName(getItem().getValue());
+
+                    try {
+                        Map<String, Man> newData = new LinkedHashMap<>();
+                        newData.put(getItem().getKey(), Storage.getInstanceOf().getFamily().get(getItem().getKey()));
+                        if(!newData.values().iterator().next().setName(getItem().getValue())){
+                            new ShowAlert(Alert.AlertType.ERROR, "Error", "Name isn't correct");
+                        }
+
+                        ClientLoad clientLoad = new ClientLoad();
+                        clientLoad.send(newData, "UPDATE");
+                        MessageFromClient messageFromClient = clientLoad.readData();
+                        Storage.getInstanceOf().setFamily(messageFromClient.getDataFromClient());
+
+                        if (!messageFromClient.getClientCollectionState()) {
+                            new ShowAlert(Alert.AlertType.INFORMATION, "Done", "You had an old version of the collection. \nThe collection was updated.");
+                        }
+
+
+                        tree.setRoot(MainWindow.getTreeForPeople());
+
+                    } catch (NullPointerException ex) {
+                        new ShowAlert(Alert.AlertType.ERROR, "Error", "Не верно введены данные об объекте");
+                    } catch (IOException ex) {
+                        new ShowAlert(Alert.AlertType.ERROR, "Error", "\nCould not connect to server");
+                    }
+                }else{
+                    new ShowAlert(Alert.AlertType.ERROR,"Error", "У тебя тут нет прав");
+                    cancelEdit();
                 }
             } else if (e.getCode() == KeyCode.ESCAPE) {
                 cancelEdit();

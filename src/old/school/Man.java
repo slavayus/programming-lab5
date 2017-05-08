@@ -10,7 +10,7 @@ public abstract class Man implements Serializable{
     protected int age;
     private static final long serialVersionUID =2;
 
-    public Man(String name) {
+    protected Man(String name) {
         setName(name);
     }
 

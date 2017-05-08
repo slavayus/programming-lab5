@@ -20,6 +20,7 @@ import javafx.stage.Stage;
 import old.school.Man;
 import old.school.People;
 
+import java.io.IOException;
 import java.net.SocketException;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -129,8 +130,8 @@ public class AddObjects {
             new ShowAlert(Alert.AlertType.ERROR, "Error", "Не удалось распознать объект,\nпроверьте корректность данных");
         } catch (NullPointerException ex) {
             new ShowAlert(Alert.AlertType.ERROR, "Error", "\nНе верно введены данные об объекте");
-        } catch (SocketException e) {
-//            e.printStackTrace();
+        } catch (IOException e) {
+            new ShowAlert(Alert.AlertType.ERROR, "Error", "\nCould not connect to server");
         }
 
         peopleTree.setRoot(MainWindow.getTreeForPeople());

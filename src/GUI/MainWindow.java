@@ -1,6 +1,7 @@
 package GUI;
 
 import commands.*;
+import javafx.scene.control.cell.TextFieldTreeCell;
 import old.school.Man;
 import old.school.People;
 import javafx.application.Platform;
@@ -27,9 +28,9 @@ import java.util.Map;
 /**
  * Created by slavik on 01.04.17.
  */
-public class MainWindow {
+public class MainWindow extends TreeCell<Container> {
     private Stage mainWindow = new Stage();
-    private TreeView<Container> peopleTree;
+    private static TreeView<Container> peopleTree;
     private RemoveObject removeObject = new RemoveObject();
     private AddObjects addObjects = new AddObjects();
     private ImportObjects importObjects = new ImportObjects();
@@ -39,25 +40,19 @@ public class MainWindow {
     private Version version;
 
 
-    public MainWindow(Version version) {
+    MainWindow(Version version) {
         this.version = version;
     }
 
     void showWindow() {
-        Thread loadThread = new Thread(Storage.getInstanceOf());
-        loadThread.start();
-        try {
-            loadThread.join();
-        } catch (InterruptedException e) {
-//            e.printStackTrace();
-        }
+        Storage.getInstanceOf().readFromDB(peopleTree);
 
         peopleTree = new TreeView<>(getTreeForPeople());
         if (version == Version.FULL) {
             peopleTree.setEditable(true);
         }
-        peopleTree.setCellFactory(TreeTextFieldEditor::new);
 
+        peopleTree.setCellFactory(TreeTextFieldEditor::new);
 
         peopleTree.setPrefWidth(10000);
         peopleTree.setStyle("-fx-background-color: #000000");
@@ -259,14 +254,29 @@ public class MainWindow {
 
         ListView<StringBuilder> peopleListView = new ListView<>(commands);
 
+//        peopleListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+
         listViewActionListener(peopleListView);
+
 
         return peopleListView;
     }
 
     private void listViewActionListener(ListView<StringBuilder> peopleListView) {
+
+        peopleListView.setOnMouseClicked(event -> {
+            if (!peopleListView.getSelectionModel().isEmpty()) {
+                peopleListView.getSelectionModel().clearSelection();
+            }
+        });
+
         peopleListView.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends StringBuilder> observable, StringBuilder oldValue, StringBuilder newValue) -> {
-            StringBuilder method = new StringBuilder(newValue);
+            StringBuilder method = null;
+            try {
+                method = new StringBuilder(newValue);
+            } catch (Exception e) {
+                return;
+            }
 
             String className = String.valueOf(method.indexOf(" ") == -1 ?
                     method.replace(0, 1, method.substring(0, 1).toLowerCase()) :

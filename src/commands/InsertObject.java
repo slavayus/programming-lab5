@@ -20,6 +20,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.net.SocketException;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -107,7 +108,8 @@ public class InsertObject {
             MessageFromClient messageFromClient = clientLoad.readData();
             Storage.getInstanceOf().setFamily(messageFromClient.getDataFromClient());
             peopleTree.setRoot(MainWindow.getTreeForPeople());
-            if(!messageFromClient.getClientCollectionState()){
+
+            if (!messageFromClient.getClientCollectionState()) {
                 new ShowAlert(Alert.AlertType.INFORMATION, "Done", "You had an old version of the collection. \nThe collection was updated.");
             }
             new ShowAlert(Alert.AlertType.INFORMATION, "Done", "\n" + messageFromClient.getMsg());
@@ -116,8 +118,8 @@ public class InsertObject {
             new ShowAlert(Alert.AlertType.ERROR, "Error", "Не верно введены данные об объекте");
         } catch (JsonSyntaxException ex) {
             new ShowAlert(Alert.AlertType.ERROR, "Error", "Не удалось распознать объект, \nпроверьте корректность данных");
-        } catch (SocketException e) {
-//            e.printStackTrace();
+        } catch (IOException e) {
+            new ShowAlert(Alert.AlertType.ERROR, "Error", "\nCould not connect to server");
         }
         dataStage.close();
         dataStage = null;

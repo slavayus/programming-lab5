@@ -6,6 +6,8 @@ import GUI.Storage;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
+import connectServer.ClientLoad;
+import connectServer.MessageFromClient;
 import old.school.Man;
 import old.school.People;
 import javafx.geometry.Insets;
@@ -19,16 +21,16 @@ import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import javafx.scene.control.Alert;
 
-import java.io.PrintWriter;
+import java.io.IOException;
+import java.net.SocketException;
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.function.Predicate;
 
 /**
  * Created by slavik on 21.02.17.
  */
 public class RemoveObject {
     private static Gson gson = new GsonBuilder().create();
-    private static PrintWriter printWriter = new PrintWriter(System.out, true);
     private String data;
     private People people;
     private Stage dataStage = null;
@@ -50,112 +52,14 @@ public class RemoveObject {
         }
         buttonOK.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ENTER) {
-                removeFromCollectionWithKey(peopleEntry -> peopleEntry.getKey().compareTo(data) > 0, peopleTree, keyTextField);
+                removeFromCollectionWithKey(peopleTree, keyTextField, "REMOVE_GREATER_KEY");
             }
         });
 
-        buttonOK.setOnMouseClicked(event -> removeFromCollectionWithKey(peopleEntry -> peopleEntry.getKey().compareTo(data) > 0, peopleTree, keyTextField));
+        buttonOK.setOnMouseClicked(event -> removeFromCollectionWithKey(peopleTree, keyTextField, "REMOVE_GREATER_KEY"));
 
     }
 
-    /**
-     * Команда remove.
-     * Удаляет элемент из коллекции по его ключу.
-     *
-     * @param peopleTree Ожидается TreeView<Container> для изменения содержимого
-     * @version 3.0
-     */
-    public void removeWithKey(TreeView<Container> peopleTree) {
-        if (dataStage == null) {
-            readDataFromTextField("Key");
-        } else {
-            dataStage.toFront();
-        }
-
-        buttonOK.setOnKeyPressed(event -> {
-            if (event.getCode() == KeyCode.ENTER) {
-                removeFromCollectionWithKey(peopleEntry -> peopleEntry.getKey().equals(data), peopleTree, keyTextField);
-            }
-        });
-
-        buttonOK.setOnMouseClicked(event -> removeFromCollectionWithKey(peopleEntry -> peopleEntry.getKey().equals(data), peopleTree, keyTextField));
-
-    }
-
-    /**
-     * Команда remove_greater.
-     * Удаляет из коллекции все элементы, превышающие заданный.
-     *
-     * @param peopleTree Ожидается TreeView<Container> для изменения содержимого
-     * @version 3.0
-     * @since 1.0
-     */
-    public void removeGreater(TreeView<Container> peopleTree) {
-        if (dataStage == null) {
-            readDataFromTextField("{name=\"name\";age=1}");
-        } else {
-            dataStage.toFront();
-        }
-
-        buttonOK.setOnKeyPressed(event -> {
-            if (event.getCode() == KeyCode.ENTER) {
-                removeFromCollectionWithObject(peopleEntry -> peopleEntry.getValue().getAge() > people.getAge(), peopleTree, keyTextField);
-            }
-        });
-
-        buttonOK.setOnMouseClicked(event -> removeFromCollectionWithObject(peopleEntry -> peopleEntry.getValue().getAge() > people.getAge(), peopleTree, keyTextField));
-
-    }
-
-    /**
-     * Команда remove_all.
-     * Удалят из коллекции все элементы, эквивалентные заданному.
-     *
-     * @param peopleTree Ожидается TreeView<Container> для изменения содержимого
-     * @version 3.0
-     * @since 1.0
-     */
-    public void removeAll(TreeView<Container> peopleTree) {
-        if (dataStage == null) {
-            readDataFromTextField("{name=\"name\";age=1}");
-        } else {
-            dataStage.toFront();
-        }
-
-        buttonOK.setOnKeyPressed(event -> {
-            if (event.getCode() == KeyCode.ENTER) {
-                removeFromCollectionWithObject(peopleEntry -> peopleEntry.getValue().getAge() == people.getAge(), peopleTree, keyTextField);
-            }
-        });
-
-        buttonOK.setOnMouseClicked(event -> removeFromCollectionWithObject(peopleEntry -> peopleEntry.getValue().getAge() == people.getAge(), peopleTree, keyTextField));
-
-    }
-
-    /**
-     * Команда remove_lower.
-     * Удаляет из коллекции все элементы, меньшие, чем заданный.
-     *
-     * @param peopleTree Ожидается TreeView<Container> для изменения содержимого
-     * @version 3.0
-     * @since 1.0
-     */
-    public void removeLowerObject(TreeView<Container> peopleTree) {
-        if (dataStage == null) {
-            readDataFromTextField("{name=\"name\";age=1}");
-        } else {
-            dataStage.toFront();
-        }
-
-        buttonOK.setOnKeyPressed(event -> {
-            if (event.getCode() == KeyCode.ENTER) {
-                removeFromCollectionWithObject(peopleEntry -> peopleEntry.getValue().getAge() < people.getAge(), peopleTree, keyTextField);
-            }
-        });
-
-        buttonOK.setOnMouseClicked(event -> removeFromCollectionWithObject(peopleEntry -> peopleEntry.getValue().getAge() < people.getAge(), peopleTree, keyTextField));
-
-    }
 
     /**
      * Команда remove_lower.
@@ -173,13 +77,115 @@ public class RemoveObject {
 
         buttonOK.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ENTER) {
-                removeFromCollectionWithKey(peopleEntry -> peopleEntry.getKey().compareTo(data) < 0, peopleTree, keyTextField);
+                removeFromCollectionWithKey(peopleTree, keyTextField, "REMOVE_LOWER_KEY");
             }
         });
 
-        buttonOK.setOnMouseClicked(event -> removeFromCollectionWithKey(peopleEntry -> peopleEntry.getKey().compareTo(data) < 0, peopleTree, keyTextField));
+        buttonOK.setOnMouseClicked(event -> removeFromCollectionWithKey(peopleTree, keyTextField, "REMOVE_LOWER_KEY"));
 
     }
+
+
+    /**
+     * Команда remove.
+     * Удаляет элемент из коллекции по его ключу.
+     *
+     * @param peopleTree Ожидается TreeView<Container> для изменения содержимого
+     * @version 3.0
+     */
+    public void removeWithKey(TreeView<Container> peopleTree) {
+        if (dataStage == null) {
+            readDataFromTextField("Key");
+        } else {
+            dataStage.toFront();
+        }
+
+        buttonOK.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                removeFromCollectionWithKey(peopleTree, keyTextField, "REMOVE_WITH_KEY");
+            }
+        });
+
+        buttonOK.setOnMouseClicked(event -> removeFromCollectionWithKey(peopleTree, keyTextField, "REMOVE_WITH_KEY"));
+
+    }
+
+
+    /**
+     * Команда remove_greater.
+     * Удаляет из коллекции все элементы, превышающие заданный.
+     *
+     * @param peopleTree Ожидается TreeView<Container> для изменения содержимого
+     * @version 3.0
+     * @since 1.0
+     */
+    public void removeGreater(TreeView<Container> peopleTree) {
+        if (dataStage == null) {
+            readDataFromTextField("Object");
+        } else {
+            dataStage.toFront();
+        }
+
+        buttonOK.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                removeFromCollectionWithObject(peopleTree, keyTextField, "REMOVE_GREATER");
+            }
+        });
+
+        buttonOK.setOnMouseClicked(event -> removeFromCollectionWithObject(peopleTree, keyTextField, "REMOVE_GREATER"));
+
+    }
+
+    /**
+     * Команда remove_all.
+     * Удалят из коллекции все элементы, эквивалентные заданному.
+     *
+     * @param peopleTree Ожидается TreeView<Container> для изменения содержимого
+     * @version 3.0
+     * @since 1.0
+     */
+    public void removeAll(TreeView<Container> peopleTree) {
+        if (dataStage == null) {
+            readDataFromTextField("Object");
+        } else {
+            dataStage.toFront();
+        }
+
+        buttonOK.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                removeFromCollectionWithObject(peopleTree, keyTextField, "REMOVE_ALL");
+            }
+        });
+
+        buttonOK.setOnMouseClicked(event -> removeFromCollectionWithObject(peopleTree, keyTextField, "REMOVE_ALL"));
+
+    }
+
+    /**
+     * Команда remove_lower.
+     * Удаляет из коллекции все элементы, меньшие, чем заданный.
+     *
+     * @param peopleTree Ожидается TreeView<Container> для изменения содержимого
+     * @version 3.0
+     * @since 1.0
+     */
+    public void removeLowerObject(TreeView<Container> peopleTree) {
+        if (dataStage == null) {
+            readDataFromTextField("Object");
+        } else {
+            dataStage.toFront();
+        }
+
+        buttonOK.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                removeFromCollectionWithObject(peopleTree, keyTextField, "REMOVE_LOWER_OBJECT");
+            }
+        });
+
+        buttonOK.setOnMouseClicked(event -> removeFromCollectionWithObject(peopleTree, keyTextField, "REMOVE_LOWER_OBJECT"));
+
+    }
+
 
     private void readDataFromTextField(String element) {
         dataStage = new Stage();
@@ -207,33 +213,65 @@ public class RemoveObject {
         dataStage.setOnCloseRequest(event -> dataStage = null);
     }
 
-    private void removeFromCollectionWithKey(Predicate<Map.Entry<String, Man>> predicate, TreeView<Container> peopleTree, TextField textField) {
+    private void removeFromCollectionWithKey(TreeView<Container> peopleTree, TextField textField, String command) {
         this.data = textField.getText();
         dataStage.close();
         dataStage = null;
 
-        int size = Storage.getInstanceOf().getFamily().size();
-        Storage.getInstanceOf().getFamily().entrySet().removeIf(predicate);
-        peopleTree.setRoot(MainWindow.getTreeForPeople());
-        new ShowAlert(Alert.AlertType.INFORMATION, "Done", "Операция выполнена успешно. \nУдалено " + (size - Storage.getInstanceOf().getFamily().size()) + " объекта.");
+
+        try {
+            Map<String, Man> newData = new LinkedHashMap<>();
+            newData.put(data, new People("null"));
+            ClientLoad clientLoad = new ClientLoad();
+            clientLoad.send(newData, command);
+            MessageFromClient messageFromClient = clientLoad.readData();
+            Storage.getInstanceOf().setFamily(messageFromClient.getDataFromClient());
+            peopleTree.setRoot(MainWindow.getTreeForPeople());
+
+            if (!messageFromClient.getClientCollectionState()) {
+                new ShowAlert(Alert.AlertType.INFORMATION, "Done", "You had an old version of the collection. \nThe collection was updated.");
+            }
+            new ShowAlert(Alert.AlertType.INFORMATION, "Done", messageFromClient.getMsg() + " \nWas removed " + messageFromClient.getModifiedRow() + " objects");
+
+        } catch (NullPointerException ex) {
+            new ShowAlert(Alert.AlertType.ERROR, "Error", "Не верно введены данные об объекте");
+        } catch (IOException e) {
+            new ShowAlert(Alert.AlertType.ERROR, "Error", "\nCould not connect to server");
+        }
     }
 
 
-    private void removeFromCollectionWithObject(Predicate<Map.Entry<String, Man>> predicate, TreeView<Container> peopleTree, TextField textField) {
+    private void removeFromCollectionWithObject(TreeView<Container> peopleTree, TextField textField, String command) {
         this.data = textField.getText();
         dataStage.close();
         dataStage = null;
 
         try {
-            people = gson.fromJson(data, People.class);
-            int size = Storage.getInstanceOf().getFamily().size();
-            Storage.getInstanceOf().getFamily().entrySet().removeIf(predicate);
+            People people = gson.fromJson(data, People.class);
+            if (people == null || people.getAge() < 0 || !people.setName(people.getName())) {
+                throw new NullPointerException();
+            }
+
+            Map<String, Man> newData = new LinkedHashMap<>();
+            newData.put("0", people);
+
+            ClientLoad clientLoad = new ClientLoad();
+            clientLoad.send(newData, command);
+            MessageFromClient messageFromClient = clientLoad.readData();
+            Storage.getInstanceOf().setFamily(messageFromClient.getDataFromClient());
             peopleTree.setRoot(MainWindow.getTreeForPeople());
-            new ShowAlert(Alert.AlertType.INFORMATION, "Done", "Операция выполнена успешно. \nУдалено " + (size - Storage.getInstanceOf().getFamily().size()) + " объекта.");
+
+            if (!messageFromClient.getClientCollectionState()) {
+                new ShowAlert(Alert.AlertType.INFORMATION, "Done", "You had an old version of the collection. \nThe collection was updated.");
+            }
+            new ShowAlert(Alert.AlertType.INFORMATION, "Done", messageFromClient.getMsg() + " \nWas removed " + messageFromClient.getModifiedRow() + " objects");
+
+        } catch (NullPointerException ex) {
+            new ShowAlert(Alert.AlertType.ERROR, "Error", "Не верно введены данные об объекте");
         } catch (JsonSyntaxException ex) {
             new ShowAlert(Alert.AlertType.ERROR, "Error", "Не удалось распознать объект, \nпроверьте корректность данных");
-        } catch (NullPointerException ex) {
-            new ShowAlert(Alert.AlertType.ERROR, "Error", "Не ввели данные об объекте\n ");
+        } catch (IOException e) {
+            new ShowAlert(Alert.AlertType.ERROR, "Error", "\nCould not connect to server");
         }
     }
 

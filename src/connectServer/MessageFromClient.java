@@ -17,7 +17,6 @@ public class MessageFromClient {
     private boolean clientCollectionState;
     private int modifiedRow;
     private Map<String, Man> dataFromClient;
-//    private ByteBuffer outputData;
     private String msg;
 
     public boolean getClientCollectionState() {

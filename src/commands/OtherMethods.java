@@ -3,31 +3,50 @@ package commands;
 import GUI.Container;
 import GUI.MainWindow;
 import GUI.Storage;
+import com.google.gson.JsonSyntaxException;
+import connectServer.ClientLoad;
+import connectServer.MessageFromClient;
+import old.school.Man;
 import old.school.People;
 import deprecated.Place;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TreeView;
 import javafx.stage.Stage;
 
+import java.io.IOException;
+import java.net.SocketException;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 /**
  * Created by slavik on 05.04.17.
  */
 public class OtherMethods {
-    private Stage dataStage = null;
 
 
     /**
      * Команда clear.
      * Очищает коллекцию.
-     *@param peopleTree Ожидается TreeView<Container> для изменения содержимого
+     *
+     * @param peopleTree Ожидается TreeView<Container> для изменения содержимого
      * @version 3.0
      * @since 1.0
      */
     public void clear(TreeView<Container> peopleTree) {
-        int size = Storage.getInstanceOf().getFamily().size();
-        Storage.getInstanceOf().getFamily().clear();
-        new ShowAlert(Alert.AlertType.INFORMATION, "Done", "Коллекция очищена. \nУдалено " + size + " объектов");
-        peopleTree.setRoot(MainWindow.getTreeForPeople());
+
+        try {
+            Map<String, Man> newData = new LinkedHashMap<>();
+
+            ClientLoad clientLoad = new ClientLoad();
+            clientLoad.send(newData, "CLEAR");
+            MessageFromClient messageFromClient = clientLoad.readData();
+            Storage.getInstanceOf().setFamily(messageFromClient.getDataFromClient());
+            peopleTree.setRoot(MainWindow.getTreeForPeople());
+            new ShowAlert(Alert.AlertType.INFORMATION, "Done", messageFromClient.getMsg() + " \nWas removed " + messageFromClient.getModifiedRow() + " objects");
+            peopleTree.setRoot(MainWindow.getTreeForPeople());
+        } catch (IOException e) {
+            new ShowAlert(Alert.AlertType.ERROR, "Error", "\nCould not connect to server");
+        }
     }
 
     /**
@@ -45,10 +64,12 @@ public class OtherMethods {
      * Команда load.
      * Загружает дефолтные объекты типа {@link Storage} данные в коллекцию.
      *
-     *@param peopleTree Ожидается TreeView<Container> для изменения содержимого
+     * @param peopleTree Ожидается TreeView<Container> для изменения содержимого
      * @version 3.0
      */
     public void loadDefaultObjects(TreeView<Container> peopleTree) {
+        Map<String, Man> newData = new LinkedHashMap<>();
+
         People x = new People();
 
         for (int i = 0; i < Storage.getInstanceOf().getАllPlaces(); i++) {
@@ -56,51 +77,45 @@ public class OtherMethods {
         }
 
         x.setName("Малыш");
-        x.setAge((byte) 7);
-        Storage.getInstanceOf().getPlaces().get(0).setFull(x);
-        Storage.getInstanceOf().getFamily().put("0", x);
+        x.setAge(7);
+        newData.put("0", x);
 
-        x = new People();
-        x.setName("мама");
-        x.setAge((byte) 31);
-        Storage.getInstanceOf().getPlaces().get(1).setFull(x);
-        Storage.getInstanceOf().getFamily().put("1", x);
-        Storage.getInstanceOf().getFamilyOfChild().put(0, x);
+        x = new People("мама");
+        x.setAge(31);
+        newData.put("1", x);
 
-        x = new People();
-        x.setName("Папа");
-        x.setAge((byte) 32);
-        Storage.getInstanceOf().getPlaces().get(2).setFull(x);
-        Storage.getInstanceOf().getFamily().put("2", x);
-        Storage.getInstanceOf().getFamilyOfChild().put(1, x);
+        x = new People("Папа");
+        x.setAge(32);
+        newData.put("2", x);
 
-        x = new People();
-        x.setName("Босс");
-        x.setAge((byte) 23);
-        Storage.getInstanceOf().getPlaces().get(3).setFull(x);
-        Storage.getInstanceOf().getFamily().put("3", x);
-        Storage.getInstanceOf().getFamilyOfChild().put(2, x);
+        x = new People("Босс");
+        x.setAge(23);
+        newData.put("3", x);
 
-        x = new People();
-        x.setName("Бетан");
-        x.setAge((byte) 26);
-        Storage.getInstanceOf().getPlaces().get(4).setFull(x);
-        Storage.getInstanceOf().getFamily().put("4", x);
-        Storage.getInstanceOf().getFamilyOfChild().put(3, x);
+        x = new People("Бетан");
+        x.setAge(26);
+        newData.put("4", x);
 
-        x = new People();
-        x.setName("Бок");
-        x.setAge((byte) 38);
-        Storage.getInstanceOf().getPlaces().get(5).setFull(x);
-        Storage.getInstanceOf().getFamily().put("5", x);
+        x = new People("Бок");
+        x.setAge(38);
+        newData.put("5", x);
 
-        x = new People();
-        x.setName("Фрид");
-        x.setAge((byte) 45);
-        Storage.getInstanceOf().getPlaces().get(6).setFull(x);
-        Storage.getInstanceOf().getFamily().put("6", x);
+        x = new People("Фрид");
+        x.setAge(45);
+        newData.put("6", x);
 
-        new ShowAlert(Alert.AlertType.INFORMATION, "Done","\nДанные загружены \n");
-        peopleTree.setRoot(MainWindow.getTreeForPeople());
+
+        try {
+            ClientLoad clientLoad = new ClientLoad();
+            clientLoad.send(newData, "LOAD");
+            MessageFromClient messageFromClient = clientLoad.readData();
+            Storage.getInstanceOf().setFamily(messageFromClient.getDataFromClient());
+            peopleTree.setRoot(MainWindow.getTreeForPeople());
+            new ShowAlert(Alert.AlertType.INFORMATION, "Done", "\n" + messageFromClient.getMsg() + "\n");
+
+            peopleTree.setRoot(MainWindow.getTreeForPeople());
+        } catch (IOException e) {
+            new ShowAlert(Alert.AlertType.ERROR, "Error", "\nCould not connect to server");
+        }
     }
 }

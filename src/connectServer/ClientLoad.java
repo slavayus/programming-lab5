@@ -22,70 +22,15 @@ public class ClientLoad {
     private int port = 7007;
     private static boolean connection = true;
     private static ServiceInformation serviceInformation = ServiceInformation.OLD;
+    private DatagramSocket clientSocket;
 
 
-    public ClientLoad() throws SocketException {
-        try {
+    public ClientLoad() throws IOException {
+            clientSocket = new DatagramSocket();
             inetAddress = InetAddress.getLocalHost();
-        } catch (UnknownHostException e) {
-            connection = false;
-        }
-
+            new Socket(inetAddress, port);
     }
 
-
-    public static void main(String[] args) throws Exception {
-        DatagramSocket clientSocket = new DatagramSocket();
-        String msg;
-
-        while (true) {
-            Scanner scanner = new Scanner(System.in);
-
-
-            Map<String, Man> manMap = new LinkedHashMap<>();
-            People people = new People("s");
-            people.setAge(32358);
-            manMap.put("32358", people);
-
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
-            objectOutputStream.writeObject(manMap);
-
-            msg = scanner.nextLine();
-            DatagramPacket datagramPacketToServer = new DatagramPacket(byteArrayOutputStream.toByteArray(), byteArrayOutputStream.size(), InetAddress.getLocalHost(), 7007);
-            clientSocket.send(datagramPacketToServer);
-            clientSocket.send(new DatagramPacket("NEW".getBytes(), "NEW".getBytes().length, InetAddress.getLocalHost(), 7007));
-
-
-            //send new Data
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ObjectOutputStream oos = new ObjectOutputStream(baos);
-            oos.writeObject(manMap);
-            DatagramPacket datToClient = new DatagramPacket(baos.toByteArray(), baos.size(), InetAddress.getLocalHost(), 7007);
-            clientSocket.send(datToClient);
-
-
-            clientSocket.send(new DatagramPacket("BUTTON".getBytes(), "BUTTON".getBytes().length, InetAddress.getLocalHost(), 7007));
-            clientSocket.send(new DatagramPacket("REMOVE_ALL".getBytes(), "REMOVE_ALL".getBytes().length, InetAddress.getLocalHost(), 7007));
-            clientSocket.send(new DatagramPacket("END".getBytes(), "END".getBytes().length, InetAddress.getLocalHost(), 7007));
-
-            if (msg.equals("end")) {
-                break;
-            }
-
-//            System.out.println(readData().getMsg());
-
-
-            DatagramPacket datagramPacketFromServer = new DatagramPacket(dataFromServer, dataFromServer.length, InetAddress.getLocalHost(), 7007);
-            clientSocket.receive(datagramPacketFromServer);
-
-            System.out.println(new String(datagramPacketFromServer.getData(), 0, datagramPacketFromServer.getLength()));
-
-        }
-        clientSocket.close();
-    }
-
-    private DatagramSocket clientSocket = new DatagramSocket();
 
     public void send(Map<String, Man> newData, String command) {
         try {
@@ -121,7 +66,7 @@ public class ClientLoad {
         try {
             while (serviceInformation != ServiceInformation.END) {
                 dataFromServer = new byte[8 * 1024 * 1024];
-                DatagramPacket datagramPacketFromServer = new DatagramPacket(dataFromServer, dataFromServer.length, InetAddress.getLocalHost(), 7007);
+                DatagramPacket datagramPacketFromServer = new DatagramPacket(dataFromServer, dataFromServer.length, InetAddress.getLocalHost(), port);
                 clientSocket.receive(datagramPacketFromServer);
 
                 String command = new String(datagramPacketFromServer.getData(), 0, datagramPacketFromServer.getLength());
@@ -187,4 +132,7 @@ public class ClientLoad {
 
     }
 
+    public boolean getConnection() {
+        return connection;
+    }
 }

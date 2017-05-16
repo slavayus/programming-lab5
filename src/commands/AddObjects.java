@@ -4,10 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 
-import java.io.*;
-
 import GUI.*;
-import deprecated.People;
+import old.school.People;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -32,10 +30,9 @@ public class AddObjects {
      * Команда: add_if_max.
      * Добавляет новый элемент в коллекцию, если его значение превышает значение наибольшего элемента этой коллекции.
      *
-     * @param peopleTree Ожидается TreeView<Container> для изменения содержимого
      * @version 3.0
      */
-    public void addIfMax(TreeView<Container> peopleTree) {
+    public void addIfMax(TreeView<String> peopleTree) {
         if (dataStage == null) {
             readDataFromTextField(1, peopleTree);
         } else {
@@ -47,10 +44,9 @@ public class AddObjects {
      * Команда add_if_min.
      * Добавляет новый элемент в коллекцию, если его значение меньше, чем у наименьшего элемента этой коллекции.
      *
-     * @param peopleTree Ожидается TreeView<Container> для изменения содержимого
      * @version 2.0
      */
-    public void addIfMin(TreeView<Container> peopleTree) {
+    public void addIfMin(TreeView<String> peopleTree) {
         if (dataStage == null) {
             readDataFromTextField(2, peopleTree);
         } else {
@@ -58,7 +54,7 @@ public class AddObjects {
         }
     }
 
-    private void readDataFromTextField(int min, TreeView<Container> peopleTree) {
+    private void readDataFromTextField(int min, TreeView<String> peopleTree) {
         dataStage = new Stage();
 
 
@@ -93,7 +89,7 @@ public class AddObjects {
         dataStage.setOnCloseRequest(event -> dataStage = null);
     }
 
-    private void addToCollection(int min, TreeView<Container> peopleTree, TextField keyTextField) {
+    private void addToCollection(int min, TreeView<String> peopleTree, TextField keyTextField) {
         String data = keyTextField.getText();
         try {
             People people = gson.fromJson(data, People.class);

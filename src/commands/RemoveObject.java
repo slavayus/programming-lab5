@@ -1,12 +1,9 @@
 package commands;
 
-import GUI.Container;
 import GUI.MainWindow;
 import GUI.Storage;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonSyntaxException;
-import deprecated.People;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -16,7 +13,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
-import javafx.scene.control.Alert;
+import old.school.People;
 
 import java.io.PrintWriter;
 import java.util.Map;
@@ -38,10 +35,9 @@ public class RemoveObject {
      * Команда: remove_greater_key.
      * Удаляет из коллекции все элементы, ключ которых превышает заданный.
      *
-     * @param peopleTree Ожидается TreeView<Container> для изменения содержимого
      * @version 3.0
      */
-    public void removeGreaterKey(TreeView<Container> peopleTree) {
+    public void removeGreaterKey(TreeView<String> peopleTree) {
         if (dataStage == null) {
             readDataFromTextField("Key");
         } else {
@@ -61,10 +57,9 @@ public class RemoveObject {
      * Команда remove.
      * Удаляет элемент из коллекции по его ключу.
      *
-     * @param peopleTree Ожидается TreeView<Container> для изменения содержимого
      * @version 3.0
      */
-    public void removeWithKey(TreeView<Container> peopleTree) {
+    public void removeWithKey(TreeView<String> peopleTree) {
         if (dataStage == null) {
             readDataFromTextField("Key");
         } else {
@@ -82,88 +77,12 @@ public class RemoveObject {
     }
 
     /**
-     * Команда remove_greater.
-     * Удаляет из коллекции все элементы, превышающие заданный.
-     *
-     * @param peopleTree Ожидается TreeView<Container> для изменения содержимого
-     * @version 3.0
-     * @since 1.0
-     */
-    public void removeGreater(TreeView<Container> peopleTree) {
-        if (dataStage == null) {
-            readDataFromTextField("{name=\"name\";age=1}");
-        } else {
-            dataStage.toFront();
-        }
-
-        buttonOK.setOnKeyPressed(event -> {
-            if (event.getCode() == KeyCode.ENTER) {
-                removeFromCollectionWithObject(peopleEntry -> peopleEntry.getValue().getAge() > people.getAge(), peopleTree, keyTextField);
-            }
-        });
-
-        buttonOK.setOnMouseClicked(event -> removeFromCollectionWithObject(peopleEntry -> peopleEntry.getValue().getAge() > people.getAge(), peopleTree, keyTextField));
-
-    }
-
-    /**
-     * Команда remove_all.
-     * Удалят из коллекции все элементы, эквивалентные заданному.
-     *
-     * @param peopleTree Ожидается TreeView<Container> для изменения содержимого
-     * @version 3.0
-     * @since 1.0
-     */
-    public void removeAll(TreeView<Container> peopleTree) {
-        if (dataStage == null) {
-            readDataFromTextField("{name=\"name\";age=1}");
-        } else {
-            dataStage.toFront();
-        }
-
-        buttonOK.setOnKeyPressed(event -> {
-            if (event.getCode() == KeyCode.ENTER) {
-                removeFromCollectionWithObject(peopleEntry -> peopleEntry.getValue().getAge() == people.getAge(), peopleTree, keyTextField);
-            }
-        });
-
-        buttonOK.setOnMouseClicked(event -> removeFromCollectionWithObject(peopleEntry -> peopleEntry.getValue().getAge() == people.getAge(), peopleTree, keyTextField));
-
-    }
-
-    /**
-     * Команда remove_lower.
-     * Удаляет из коллекции все элементы, меньшие, чем заданный.
-     *
-     * @param peopleTree Ожидается TreeView<Container> для изменения содержимого
-     * @version 3.0
-     * @since 1.0
-     */
-    public void removeLowerObject(TreeView<Container> peopleTree) {
-        if (dataStage == null) {
-            readDataFromTextField("{name=\"name\";age=1}");
-        } else {
-            dataStage.toFront();
-        }
-
-        buttonOK.setOnKeyPressed(event -> {
-            if (event.getCode() == KeyCode.ENTER) {
-                removeFromCollectionWithObject(peopleEntry -> peopleEntry.getValue().getAge() < people.getAge(), peopleTree, keyTextField);
-            }
-        });
-
-        buttonOK.setOnMouseClicked(event -> removeFromCollectionWithObject(peopleEntry -> peopleEntry.getValue().getAge() < people.getAge(), peopleTree, keyTextField));
-
-    }
-
-    /**
      * Команда remove_lower.
      * Удаляет из коллекции все элементы, ключ которых меньше, чем заданный.
      *
-     * @param peopleTree Ожидается TreeView<Container> для изменения содержимого
      * @version 1.0
      */
-    public void removeLowerKey(TreeView<Container> peopleTree) {
+    public void removeLowerKey(TreeView<String> peopleTree) {
         if (dataStage == null) {
             readDataFromTextField("Key");
         } else {
@@ -206,7 +125,7 @@ public class RemoveObject {
         dataStage.setOnCloseRequest(event -> dataStage = null);
     }
 
-    private void removeFromCollectionWithKey(Predicate<Map.Entry<String, People>> predicate, TreeView<Container> peopleTree, TextField textField) {
+    private void removeFromCollectionWithKey(Predicate<Map.Entry<String, People>> predicate, TreeView<String> peopleTree, TextField textField) {
         this.data = textField.getText();
         dataStage.close();
         dataStage = null;
@@ -216,25 +135,4 @@ public class RemoveObject {
         peopleTree.setRoot(MainWindow.getTreeForPeople());
         new ShowAlert(Alert.AlertType.INFORMATION, "Done", "Операция выполнена успешно. \nУдалено " + (size - Storage.getInstanceOf().getFamily().size()) + " объекта.");
     }
-
-
-    private void removeFromCollectionWithObject(Predicate<Map.Entry<String, People>> predicate, TreeView<Container> peopleTree, TextField textField) {
-        this.data = textField.getText();
-        dataStage.close();
-        dataStage = null;
-
-        try {
-            people = gson.fromJson(data, People.class);
-            int size = Storage.getInstanceOf().getFamily().size();
-            Storage.getInstanceOf().getFamily().entrySet().removeIf(predicate);
-            peopleTree.setRoot(MainWindow.getTreeForPeople());
-            new ShowAlert(Alert.AlertType.INFORMATION, "Done", "Операция выполнена успешно. \nУдалено " + (size - Storage.getInstanceOf().getFamily().size()) + " объекта.");
-        } catch (JsonSyntaxException ex) {
-            new ShowAlert(Alert.AlertType.ERROR, "Error", "Не удалось распознать объект, \nпроверьте корректность данных");
-        } catch (NullPointerException ex) {
-            new ShowAlert(Alert.AlertType.ERROR, "Error", "Не ввели данные об объекте\n ");
-        }
-    }
-
-
 }

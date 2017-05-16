@@ -1,7 +1,7 @@
 package GUI;
 
 import commands.*;
-import deprecated.People;
+import old.school.People;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -28,21 +28,12 @@ import java.util.Map;
  */
 public class MainWindow {
     private Stage mainWindow = new Stage();
-    private TreeView<Container> peopleTree;
+    private TreeView<String> peopleTree;
     private RemoveObject removeObject = new RemoveObject();
     private AddObjects addObjects = new AddObjects();
-    private ImportObjects importObjects = new ImportObjects();
-    private InsertObject insertObject = new InsertObject();
-    private static final Date currentDate = new Date();
-    private final OtherMethods otherMethods = new OtherMethods();
-    private Version version;
 
 
-    public MainWindow(Version version) {
-        this.version = version;
-    }
-
-    void showWindow() {
+    public void showWindow() {
         Thread loadThread = new Thread(Storage.getInstanceOf());
         loadThread.start();
         try {
@@ -52,10 +43,6 @@ public class MainWindow {
         }
 
         peopleTree = new TreeView<>(getTreeForPeople());
-        if (version == Version.FULL) {
-            peopleTree.setEditable(true);
-        }
-        peopleTree.setCellFactory(TreeTextFieldEditor::new);
 
 
         peopleTree.setPrefWidth(10000);
@@ -63,7 +50,7 @@ public class MainWindow {
 
         HBox listViewHBox = new HBox(getAnchorPaneForListView(), peopleTree);
 
-        VBox root = new VBox(getMenuBar(), listViewHBox);
+        VBox root = new VBox(listViewHBox);
 
 
         mainWindow.setTitle("Work with Collection");
@@ -71,16 +58,16 @@ public class MainWindow {
         mainWindow.show();
     }
 
-    public static TreeItem<Container> getTreeForPeople() {
-        TreeItem<Container> family = new TreeItem<>(new Container(null, "Family", ContainerType.COLLECTION));
+    public static TreeItem<String> getTreeForPeople() {
+        TreeItem<String> family = new TreeItem<>( "Family");
         family.setExpanded(true);
 
         if (Storage.getInstanceOf() != null) {
-            TreeItem<Container> nameItem;
-            TreeItem<Container> ageItem;
+            TreeItem<String> nameItem;
+            TreeItem<String> ageItem;
             for (Map.Entry<String, People> entry : Storage.getInstanceOf().getFamily().entrySet()) {
-                nameItem = new TreeItem<>(new Container(entry.getKey(), entry.getValue().getName(), ContainerType.ELEMENT));
-                ageItem = new TreeItem<>(new Container(entry.getKey(), String.valueOf(entry.getValue().getAge()), ContainerType.AGE));
+                nameItem = new TreeItem<>(entry.getValue().getName());
+                ageItem = new TreeItem<>(String.valueOf(entry.getValue().getAge()));
                 nameItem.getChildren().add(ageItem);
                 family.getChildren().add(nameItem);
             }
@@ -103,158 +90,14 @@ public class MainWindow {
         return anchorPane;
     }
 
-    private MenuBar getMenuBar() {
-        MenuBar menuBar = new MenuBar(getFileMenu(), getProductMenu(), getAboutMenu(), getEditItemMenu());
-        menuBar.setUseSystemMenuBar(true);
-        return menuBar;
-    }
-
-    private void OpenURLException() {
-        Stage errorStage = new Stage();
-        Label errorLabel = new Label("Cannot open this URL");
-        errorStage.setScene(new Scene(errorLabel, 150, 100));
-        errorStage.show();
-    }
-
-    private Menu getFileMenu() {
-        Menu fileMenu = new Menu("_File");
-        fileMenu.setMnemonicParsing(true);
-
-        MenuItem exitFileMenuItem = new MenuItem("Exit");
-        exitFileMenuItem.setAccelerator(KeyCombination.keyCombination("Ctrl+F4"));
-
-        //ExitFileMenuListener
-        exitFileMenuItem.setOnAction(event -> Platform.exit());
-
-
-        MenuItem homeFileMenuItem = new MenuItem("Home");
-        //HomeFileMenuItemListener
-        homeFileMenuItem.setOnAction(event -> {
-            mainWindow.close();
-            new LoginWindow(new Stage()).run();
-        });
-
-
-        MenuItem infoFileMenuItem = new MenuItem("_Info");
-        infoFileMenuItem.setMnemonicParsing(true);
-        //InfoFileMenuItem
-        infoFileMenuItem.setOnAction(event -> {
-            Stage infoStage = new Stage();
-
-            Class cl = Storage.getInstanceOf().getFamily().getClass();
-            Label infoLabel = new Label("Имя коллекции - " + cl.getCanonicalName() +
-                    "\nДата инициализации - " + currentDate +
-                    "\nКоличество элемнтов - " + Storage.getInstanceOf().getFamily().size() +
-                    "\nПакет - " + cl.getPackage() +
-                    "\nИмя родительсокго класса - " + cl.getSuperclass().getName());
-
-            infoLabel.setCenterShape(true);
-            infoLabel.setAlignment(Pos.CENTER);
-            infoLabel.setPadding(new Insets(20, 0, 0, 20));
-
-
-            Button buttonOK = new Button("OK");
-            HBox buttonOKHBox = new HBox(buttonOK);
-            buttonOKHBox.setPadding(new Insets(10, 9, 0, 455));
-            buttonOK.setOnAction(eventAction -> infoStage.close());
-
-            buttonOK.setOnKeyPressed(keyEvent -> {
-                if (keyEvent.getCode() == KeyCode.ENTER) {
-                    infoStage.close();
-                }
-            });
-
-            infoStage.setTitle("Info");
-            infoStage.centerOnScreen();
-            infoStage.setScene(new Scene(new VBox(infoLabel, buttonOKHBox), 500, 143));
-            infoStage.toFront();
-            infoStage.setMaximized(false);
-            infoStage.setResizable(false);
-            infoStage.show();
-        });
-
-
-        fileMenu.getItems().addAll(infoFileMenuItem, homeFileMenuItem, exitFileMenuItem);
-
-        return fileMenu;
-    }
-
-    private Menu getProductMenu() {
-
-        Menu productsMenu = new Menu("_Products");
-        productsMenu.setMnemonicParsing(true);
-
-        MenuItem gitRepositoryProductsMenu = new MenuItem("Git Repository");
-        productsMenu.getItems().add(gitRepositoryProductsMenu);
-
-        //gitRepositoryProductsMenuListener
-        gitRepositoryProductsMenu.setOnAction((ActionEvent event) -> {
-            try {
-                new ProcessBuilder("x-www-browser", "https://github.com/slavayus").start();
-            } catch (Exception e) {
-                OpenURLException();
-            }
-        });
-
-        return productsMenu;
-    }
-
-    private Menu getAboutMenu() {
-        Menu aboutMenu = new Menu("_About");
-        aboutMenu.setMnemonicParsing(true);
-        MenuItem ourVKAboutMenuItem = new MenuItem("Our vk");
-        aboutMenu.getItems().add(ourVKAboutMenuItem);
-
-        //OurVKAboutMenuListener
-        ourVKAboutMenuItem.setOnAction((ActionEvent event) -> {
-            try {
-                new ProcessBuilder("x-www-browser", "https://vk.com/slava_yus").start();
-            } catch (IOException e) {
-                OpenURLException();
-            }
-        });
-
-        return aboutMenu;
-    }
-
-    private Menu getEditItemMenu() {
-        Menu aboutMenu = new Menu("_Edit");
-        aboutMenu.setMnemonicParsing(true);
-
-        MenuItem saveMenuItem = new MenuItem("Save");
-        aboutMenu.getItems().add(saveMenuItem);
-
-        //EditSaveMenuListener
-        saveMenuItem.setOnAction((ActionEvent event) -> otherMethods.save());
-
-        MenuItem clearMenuItem = new MenuItem("Clear");
-        aboutMenu.getItems().add(clearMenuItem);
-
-        //EditClearMenuListener
-        clearMenuItem.setOnAction((ActionEvent event) -> otherMethods.clear(peopleTree));
-
-        MenuItem loadMenuItem = new MenuItem("Load");
-        aboutMenu.getItems().add(loadMenuItem);
-
-        //EditSaveMenuListener
-        loadMenuItem.setOnAction((ActionEvent event) -> otherMethods.loadDefaultObjects(peopleTree));
-
-        return aboutMenu;
-    }
-
     private ListView<StringBuilder> getListView() {
 
         ObservableList<StringBuilder> commands = FXCollections.observableArrayList(
                 new StringBuilder("Remove greater key"),
                 new StringBuilder("Remove with key"),
-                new StringBuilder("Remove greater"),
-                new StringBuilder("Remove all"),
                 new StringBuilder("Remove lower key"),
-                new StringBuilder("Remove lower object"),
                 new StringBuilder("Add if max"),
-                new StringBuilder("Add if min"),
-                new StringBuilder("Import all from file"),
-                new StringBuilder("Insert new object"));
+                new StringBuilder("Add if min"));
 
         ListView<StringBuilder> peopleListView = new ListView<>(commands);
 
@@ -302,14 +145,6 @@ public class MainWindow {
                     } catch (IllegalAccessException | InvocationTargetException e) {
                         System.out.println(e.getMessage());
                     }
-                    break;
-                }
-                case "Import": {
-                    importObjects.importAllFromFile(peopleTree);
-                    break;
-                }
-                case "Insert": {
-                    insertObject.insertNewObject(peopleTree);
                     break;
                 }
             }

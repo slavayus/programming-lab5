@@ -1,9 +1,4 @@
-package deprecated;
-
-import old.school.Botherable;
-import old.school.Chatable;
-import old.school.Man;
-import old.school.Missable;
+package old.school;
 
 import java.io.Serializable;
 import java.util.ArrayList;

@@ -1,7 +1,10 @@
 package GUI;
 
 import commands.*;
+import connectServer.UpdateCollection;
+import javafx.event.EventHandler;
 import javafx.scene.control.cell.TextFieldTreeCell;
+import javafx.scene.input.MouseEvent;
 import old.school.Man;
 import old.school.People;
 import javafx.application.Platform;
@@ -38,6 +41,7 @@ public class MainWindow extends TreeCell<Container> {
     private static final Date currentDate = new Date();
     private final OtherMethods otherMethods = new OtherMethods();
     private Version version;
+    Thread updateThread = new Thread(new UpdateCollection());
 
 
     MainWindow(Version version) {
@@ -45,17 +49,21 @@ public class MainWindow extends TreeCell<Container> {
     }
 
     void showWindow() {
-        Storage.getInstanceOf().readFromDB(peopleTree);
+        Storage.getInstanceOf().readFromDB();
 
         peopleTree = new TreeView<>(getTreeForPeople());
         if (version == Version.FULL) {
             peopleTree.setEditable(true);
         }
 
+        updateThread.start();
+
         peopleTree.setCellFactory(TreeTextFieldEditor::new);
 
         peopleTree.setPrefWidth(10000);
         peopleTree.setStyle("-fx-background-color: #000000");
+
+
 
         HBox listViewHBox = new HBox(getAnchorPaneForListView(), peopleTree);
 
@@ -65,6 +73,11 @@ public class MainWindow extends TreeCell<Container> {
         mainWindow.setTitle("Work with Collection");
         mainWindow.setScene(new Scene(root, 428, 382));
         mainWindow.show();
+    }
+
+
+    public static TreeView<Container> getPeopleTree() {
+        return peopleTree;
     }
 
     public static TreeItem<Container> getTreeForPeople() {
@@ -264,11 +277,11 @@ public class MainWindow extends TreeCell<Container> {
 
     private void listViewActionListener(ListView<StringBuilder> peopleListView) {
 
-        peopleListView.setOnMouseClicked(event -> {
-            if (!peopleListView.getSelectionModel().isEmpty()) {
-                peopleListView.getSelectionModel().clearSelection();
-            }
-        });
+//        peopleListView.setOnMouseClicked(event -> {
+//            if (!peopleListView.getSelectionModel().isEmpty()) {
+//                peopleListView.getSelectionModel().clearSelection();
+//            }
+//        });
 
         peopleListView.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends StringBuilder> observable, StringBuilder oldValue, StringBuilder newValue) -> {
             StringBuilder method = null;

@@ -17,18 +17,17 @@ import old.school.People;
 import old.school.User;
 
 import java.io.IOException;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Consumer;
 
 /**
  * Created by slavik on 13.04.17.
  */
-public class RegisterLimitedVersion extends RegisterWindow implements Registerable {
+public class RegisterLimitedVersion  implements Registerable {
+    private List<String> data = new ArrayList<>();
+
     private boolean flagLogin = false;
     private boolean flagPassword = false;
-
 
     @Override
     public void register() {

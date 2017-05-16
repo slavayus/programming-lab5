@@ -1,15 +1,12 @@
 package connectServer;
 
 import GUI.Storage;
-import old.school.People;
 import old.school.Man;
 
 import java.io.*;
 import java.net.*;
 import java.util.Arrays;
-import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Scanner;
 
 /**
  * Created by slavik on 03.05.17.
@@ -17,20 +14,28 @@ import java.util.Scanner;
 
 public class ClientLoad {
 
-    private static byte[] dataFromServer = new byte[8 * 1024];
-    private InetAddress inetAddress;
-    private int port = 7007;
-    private static boolean connection = true;
-    private static ServiceInformation serviceInformation = ServiceInformation.OLD;
-    private DatagramSocket clientSocket;
+    private byte[] dataFromServer = new byte[8 * 1024];
+    private static InetAddress inetAddress;
+    private static int port = 7007;
+    private boolean connection = true;
+    private ServiceInformation serviceInformation = ServiceInformation.OLD;
+    private static DatagramSocket clientSocket;
+
+    static {
+        try {
+            clientSocket = new DatagramSocket();
+            inetAddress = InetAddress.getByName("10.0.0.8");
+        } catch (Exception e) {
+//            e.printStackTrace();
+        }
+    }
 
 
     public ClientLoad() throws IOException {
-            clientSocket = new DatagramSocket();
-            inetAddress = InetAddress.getLocalHost();
-//            new Socket(inetAddress, port);
+        if (clientSocket == null || inetAddress == null) {
+            throw new IOException();
+        }
     }
-
 
     public void send(Map<String, Man> newData, String command) {
         try {
@@ -65,15 +70,14 @@ public class ClientLoad {
 
         try {
             while (serviceInformation != ServiceInformation.END) {
-                dataFromServer = new byte[8 * 1024 * 1024];
-                DatagramPacket datagramPacketFromServer = new DatagramPacket(dataFromServer, dataFromServer.length, InetAddress.getLocalHost(), port);
+                dataFromServer = new byte[8 * 1024];
+                DatagramPacket datagramPacketFromServer = new DatagramPacket(dataFromServer, dataFromServer.length, inetAddress, port);
                 clientSocket.receive(datagramPacketFromServer);
-
                 String command = new String(datagramPacketFromServer.getData(), 0, datagramPacketFromServer.getLength());
 
                 dataFromServer = Arrays.copyOf(datagramPacketFromServer.getData(), datagramPacketFromServer.getLength());
 
-                analysisMsgFromClient(command, byteArrayOutputStream, messageFromClient);
+                analysisMsgFromServer(command, byteArrayOutputStream, messageFromClient);
             }
 
             serviceInformation = ServiceInformation.OLD;
@@ -81,6 +85,9 @@ public class ClientLoad {
             ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
             ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream);
             messageFromClient.setDataFromClient((Map<String, Man>) objectInputStream.readObject());
+
+
+            System.out.println("getData" + messageFromClient.getDataFromClient());
 
         } catch (IOException e) {
             connection = false;
@@ -92,7 +99,7 @@ public class ClientLoad {
     }
 
 
-    private static void analysisMsgFromClient(String command, ByteArrayOutputStream byteArrayOutputStream, MessageFromClient messageFromClient) throws IOException, ClassNotFoundException {
+    private void analysisMsgFromServer(String command, ByteArrayOutputStream byteArrayOutputStream, MessageFromClient messageFromClient) throws IOException, ClassNotFoundException {
         ByteArrayInputStream byteArrayInputStream;
         ObjectInputStream objectInputStream;
 
@@ -134,5 +141,23 @@ public class ClientLoad {
 
     public boolean getConnection() {
         return connection;
+    }
+
+    public boolean createNewConnection() {
+
+        return true;
+    }
+
+
+    public static DatagramSocket getClientSocket() {
+        return clientSocket;
+    }
+
+    public static InetAddress getInetAddress() {
+        return inetAddress;
+    }
+
+    public static int getPort() {
+        return port;
     }
 }

@@ -102,6 +102,7 @@ public class InsertObject {
 
             Map<String, Man> newData = new LinkedHashMap<>();
             newData.put(key, people);
+            System.out.println(people);
 
             ClientLoad clientLoad = new ClientLoad();
             clientLoad.send(newData, "INSERT_NEW_OBJECT");

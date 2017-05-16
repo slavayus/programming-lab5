@@ -32,15 +32,8 @@ public final class Storage {
     private Storage() {
     }
 
-    void readFromDB(TreeView<Container> peopleTree) {
-        GsonBuilder builder = new GsonBuilder();
-        builder.registerTypeAdapter(Missable.class, new InterfaceAdapter<People>());
-        builder.registerTypeAdapter(Chatable.class, new InterfaceAdapter<People>());
-        builder.registerTypeAdapter(Botherable.class, new InterfaceAdapter<People>());
-        Gson gson = builder.create();
-
-
-        MessageFromClient messageFromClient = null;
+    void readFromDB() {
+        MessageFromClient messageFromClient;
         try {
             Map<String, Man> newData = new LinkedHashMap<>();
             ClientLoad clientLoad = new ClientLoad();

@@ -46,7 +46,7 @@ public class TreeTextFieldEditor extends TreeCell<Container> {
         textField.selectAll();
     }
 
-    private void createTextField() {
+    public void createTextField() {
         textField = new TextField(getString());
         textField.setOnKeyReleased(e -> {
             if (e.getCode() == KeyCode.ENTER) {
@@ -56,7 +56,9 @@ public class TreeTextFieldEditor extends TreeCell<Container> {
 
                     try {
                         Map<String, Man> newData = new LinkedHashMap<>();
-                        newData.put(getItem().getKey(), Storage.getInstanceOf().getFamily().get(getItem().getKey()));
+                        People people = new People(Storage.getInstanceOf().getFamily().get(getItem().getKey()).getName());
+                        people.setAge(Storage.getInstanceOf().getFamily().get(getItem().getKey()).getAge());
+                        newData.put(getItem().getKey(), people);
                         if(!newData.values().iterator().next().setName(getItem().getValue())){
                             new ShowAlert(Alert.AlertType.ERROR, "Error", "Name isn't correct");
                         }

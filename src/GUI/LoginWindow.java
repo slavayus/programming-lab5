@@ -2,7 +2,6 @@ package GUI;
 
 import Register.RegisterLimitedVersion;
 import Register.RegisterFullVersion;
-import Register.RegisterWindow;
 import Register.Registerable;
 import commands.ShowAlert;
 import connectServer.ClientLoad;
@@ -24,10 +23,7 @@ import old.school.User;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by slavik on 02.04.17.
@@ -41,7 +37,6 @@ public class LoginWindow implements Runnable {
     private HBox rootHBox = new HBox();
     private Label messageLabel = new Label();
     private Version version = Version.LIMITED;
-    private Registerable registerFullVersion = new RegisterFullVersion();
 
     public LoginWindow(Stage primaryStage) {
         this.primaryStage = primaryStage;
@@ -119,6 +114,23 @@ public class LoginWindow implements Runnable {
             newData.put(userPasswordField.getText(), new User(userNameTextField.getText(), 1));
 
             ClientLoad clientLoad = new ClientLoad();
+
+            if (!clientLoad.createNewConnection()) {
+
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText(null);
+                alert.setContentText("Could not connect to server");
+
+                alert.getButtonTypes().clear();
+                alert.getButtonTypes().add(ButtonType.OK);
+                Button yesButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
+                yesButton.setOnAction(event -> System.out.println(9));
+
+                alert.showAndWait();
+                System.exit(0);
+            }
+
             clientLoad.send(newData, "LOGIN");
             MessageFromClient messageFromClient = clientLoad.readData();
 
@@ -210,10 +222,8 @@ public class LoginWindow implements Runnable {
         Hyperlink register = new Hyperlink("Want to get the full version?");
 
         register.setOnAction(event -> {
-            if (((RegisterFullVersion) registerFullVersion).getDialogStage() == null) {
-                ((RegisterFullVersion) registerFullVersion).setDialogStage(new Stage());
-            }
-            registerFullVersion.register();
+            Registerable registerAccount = new RegisterFullVersion();
+            registerAccount.register();
         });
 
         fullVersionHBox.getChildren().add(register);

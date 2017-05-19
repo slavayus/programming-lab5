@@ -258,6 +258,12 @@ public class RemoveObject {
             ClientLoad clientLoad = new ClientLoad();
             clientLoad.send(newData, command);
             MessageFromClient messageFromClient = clientLoad.readData();
+
+            if (!clientLoad.getConnection()) {
+                new ShowAlert(Alert.AlertType.ERROR, "Error", messageFromClient.getMsg());
+                return;
+            }
+
             Storage.getInstanceOf().setFamily(messageFromClient.getDataFromClient());
             peopleTree.setRoot(MainWindow.getTreeForPeople());
 

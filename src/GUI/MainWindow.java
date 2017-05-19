@@ -1,12 +1,7 @@
 package GUI;
 
 import commands.*;
-import connectServer.UpdateCollection;
-import javafx.event.EventHandler;
-import javafx.scene.control.cell.TextFieldTreeCell;
-import javafx.scene.input.MouseEvent;
 import old.school.Man;
-import old.school.People;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -25,8 +20,7 @@ import javafx.stage.Stage;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Date;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by slavik on 01.04.17.
@@ -41,14 +35,12 @@ public class MainWindow extends TreeCell<Container> {
     private static final Date currentDate = new Date();
     private final OtherMethods otherMethods = new OtherMethods();
     private Version version;
-    Thread updateThread = new Thread(new UpdateCollection());
 
-
-    MainWindow(Version version) {
+    public MainWindow(Version version) {
         this.version = version;
     }
 
-    void showWindow() {
+    public void showWindow() {
         Storage.getInstanceOf().readFromDB();
 
         peopleTree = new TreeView<>(getTreeForPeople());
@@ -56,7 +48,6 @@ public class MainWindow extends TreeCell<Container> {
             peopleTree.setEditable(true);
         }
 
-        updateThread.start();
 
         peopleTree.setCellFactory(TreeTextFieldEditor::new);
 
@@ -64,13 +55,14 @@ public class MainWindow extends TreeCell<Container> {
         peopleTree.setStyle("-fx-background-color: #000000");
 
 
+        ResourceBundle defaultBundle = ResourceBundle.getBundle("bundles.Locale");
 
-        HBox listViewHBox = new HBox(getAnchorPaneForListView(), peopleTree);
+        HBox listViewHBox = new HBox(getAnchorPaneForListView(defaultBundle), peopleTree);
 
-        VBox root = new VBox(getMenuBar(), listViewHBox);
+        VBox root = new VBox(getMenuBar(defaultBundle), listViewHBox);
 
 
-        mainWindow.setTitle("Work with Collection");
+        mainWindow.setTitle(defaultBundle.getString("system.name"));
         mainWindow.setScene(new Scene(root, 428, 382));
         mainWindow.show();
     }
@@ -98,8 +90,8 @@ public class MainWindow extends TreeCell<Container> {
         return family;
     }
 
-    private AnchorPane getAnchorPaneForListView() {
-        ListView<StringBuilder> listView = getListView();
+    private AnchorPane getAnchorPaneForListView(ResourceBundle bundle) {
+        ListView<StringBuilder> listView = getListView(bundle);
         listView.setPrefSize(160, 115);
 
         AnchorPane.setTopAnchor(listView, 0.0);
@@ -112,8 +104,14 @@ public class MainWindow extends TreeCell<Container> {
         return anchorPane;
     }
 
-    private MenuBar getMenuBar() {
-        MenuBar menuBar = new MenuBar(getFileMenu(), getProductMenu(), getAboutMenu(), getEditItemMenu());
+    private MenuBar getMenuBar(ResourceBundle bundle) {
+        MenuBar menuBar = new MenuBar(
+                getFileMenu(bundle),
+                getProductMenu(bundle),
+                getAboutMenu(bundle),
+                getEditItemMenu(bundle),
+                languageSelector(bundle));
+
         menuBar.setUseSystemMenuBar(true);
         return menuBar;
     }
@@ -125,18 +123,20 @@ public class MainWindow extends TreeCell<Container> {
         errorStage.show();
     }
 
-    private Menu getFileMenu() {
-        Menu fileMenu = new Menu("_File");
+    private Menu getFileMenu(ResourceBundle bundle) {
+        Menu fileMenu = new Menu("_" + bundle.getString("menu.file"));
         fileMenu.setMnemonicParsing(true);
 
-        MenuItem exitFileMenuItem = new MenuItem("Exit");
+        MenuItem exitFileMenuItem = new MenuItem(bundle.getString("menu.file.exit"));
         exitFileMenuItem.setAccelerator(KeyCombination.keyCombination("Ctrl+F4"));
 
         //ExitFileMenuListener
         exitFileMenuItem.setOnAction(event -> Platform.exit());
 
 
-        MenuItem homeFileMenuItem = new MenuItem("Home");
+        MenuItem homeFileMenuItem = null;
+        homeFileMenuItem = new MenuItem(bundle.getString("menu.file.home"));
+
         //HomeFileMenuItemListener
         homeFileMenuItem.setOnAction(event -> {
             mainWindow.close();
@@ -144,8 +144,7 @@ public class MainWindow extends TreeCell<Container> {
         });
 
 
-        MenuItem infoFileMenuItem = new MenuItem("_Info");
-        infoFileMenuItem.setMnemonicParsing(true);
+        MenuItem infoFileMenuItem = new MenuItem(bundle.getString("menu.file.info"));
         //InfoFileMenuItem
         infoFileMenuItem.setOnAction(event -> {
             Stage infoStage = new Stage();
@@ -188,12 +187,12 @@ public class MainWindow extends TreeCell<Container> {
         return fileMenu;
     }
 
-    private Menu getProductMenu() {
+    private Menu getProductMenu(ResourceBundle bundle) {
 
-        Menu productsMenu = new Menu("_Products");
+        Menu productsMenu = new Menu("_" + bundle.getString("menu.product"));
         productsMenu.setMnemonicParsing(true);
 
-        MenuItem gitRepositoryProductsMenu = new MenuItem("Git Repository");
+        MenuItem gitRepositoryProductsMenu = new MenuItem(bundle.getString("menu.product.git"));
         productsMenu.getItems().add(gitRepositoryProductsMenu);
 
         //gitRepositoryProductsMenuListener
@@ -208,10 +207,10 @@ public class MainWindow extends TreeCell<Container> {
         return productsMenu;
     }
 
-    private Menu getAboutMenu() {
-        Menu aboutMenu = new Menu("_About");
+    private Menu getAboutMenu(ResourceBundle bundle) {
+        Menu aboutMenu = new Menu("_" + bundle.getString("menu.about"));
         aboutMenu.setMnemonicParsing(true);
-        MenuItem ourVKAboutMenuItem = new MenuItem("Our vk");
+        MenuItem ourVKAboutMenuItem = new MenuItem(bundle.getString("menu.about.vk"));
         aboutMenu.getItems().add(ourVKAboutMenuItem);
 
         //OurVKAboutMenuListener
@@ -226,23 +225,23 @@ public class MainWindow extends TreeCell<Container> {
         return aboutMenu;
     }
 
-    private Menu getEditItemMenu() {
-        Menu aboutMenu = new Menu("_Edit");
+    private Menu getEditItemMenu(ResourceBundle bundle) {
+        Menu aboutMenu = new Menu("_" + bundle.getString("menu.edit"));
         aboutMenu.setMnemonicParsing(true);
 
-        MenuItem saveMenuItem = new MenuItem("Save");
+        MenuItem saveMenuItem = new MenuItem(bundle.getString("menu.edit.save"));
         aboutMenu.getItems().add(saveMenuItem);
 
         //EditSaveMenuListener
         saveMenuItem.setOnAction((ActionEvent event) -> otherMethods.save());
 
-        MenuItem clearMenuItem = new MenuItem("Clear");
+        MenuItem clearMenuItem = new MenuItem(bundle.getString("menu.edit.clear"));
         aboutMenu.getItems().add(clearMenuItem);
 
         //EditClearMenuListener
         clearMenuItem.setOnAction((ActionEvent event) -> otherMethods.clear(peopleTree));
 
-        MenuItem loadMenuItem = new MenuItem("Load");
+        MenuItem loadMenuItem = new MenuItem(bundle.getString("menu.edit.load"));
         aboutMenu.getItems().add(loadMenuItem);
 
         //EditSaveMenuListener
@@ -251,42 +250,136 @@ public class MainWindow extends TreeCell<Container> {
         return aboutMenu;
     }
 
-    private ListView<StringBuilder> getListView() {
+    private Menu languageSelector(ResourceBundle bundle) {
+        Menu languageMenu = new Menu("_" + bundle.getString("menu.language"));
+        languageMenu.setMnemonicParsing(true);
+
+
+        //enMenuItem
+        MenuItem enMenuItem = new MenuItem(bundle.getString("menu.language.en"));
+        languageMenu.getItems().add(enMenuItem);
+        enMenuItem.setOnAction((ActionEvent event) -> {
+
+            ResourceBundle resourceBundle = ResourceBundle.getBundle("bundles.Locale", new Locale("en", "EN"));
+
+            HBox listViewHBox = new HBox(getAnchorPaneForListView(resourceBundle), peopleTree);
+
+            VBox root = new VBox(getMenuBar(resourceBundle), listViewHBox);
+
+            mainWindow.setTitle(resourceBundle.getString("system.name"));
+            mainWindow.setScene(new Scene(root, 428, 382));
+        });
+
+
+        //ruMenuItem
+        MenuItem ruMenuItem = new MenuItem(bundle.getString("menu.language.ru"));
+        languageMenu.getItems().add(ruMenuItem);
+        ruMenuItem.setOnAction((ActionEvent event) -> {
+
+            ResourceBundle resourceBundle = ResourceBundle.getBundle("bundles.Locale", new Locale("ru", "RU"));
+
+            HBox listViewHBox = new HBox(getAnchorPaneForListView(resourceBundle), peopleTree);
+
+
+            VBox root = new VBox(getMenuBar(resourceBundle), listViewHBox);
+
+            mainWindow.setTitle(resourceBundle.getString("system.name"));
+            mainWindow.setScene(new Scene(root, 428, 382));
+        });
+
+
+        //mkMenuItem
+        MenuItem mkMenuItem = new MenuItem(bundle.getString("menu.language.mk"));
+        languageMenu.getItems().add(mkMenuItem);
+        mkMenuItem.setOnAction((ActionEvent event) -> {
+
+            ResourceBundle resourceBundle = ResourceBundle.getBundle("bundles.Locale", new Locale("mk", "MK"));
+
+            HBox listViewHBox = new HBox(getAnchorPaneForListView(resourceBundle), peopleTree);
+
+            VBox root = new VBox(getMenuBar(resourceBundle), listViewHBox);
+
+            mainWindow.setTitle(resourceBundle.getString("system.name"));
+            mainWindow.setScene(new Scene(root, 428, 382));
+        });
+
+
+        //bgMenuItem
+        MenuItem bgMenuItem = new MenuItem(bundle.getString("menu.language.bg"));
+        languageMenu.getItems().add(bgMenuItem);
+        bgMenuItem.setOnAction((ActionEvent event) -> {
+
+            ResourceBundle resourceBundle = ResourceBundle.getBundle("bundles.Locale", new Locale("bg", "BG"));
+
+            HBox listViewHBox = new HBox(getAnchorPaneForListView(resourceBundle), peopleTree);
+
+            VBox root = new VBox(getMenuBar(resourceBundle), listViewHBox);
+
+            mainWindow.setTitle(resourceBundle.getString("system.name"));
+            mainWindow.setScene(new Scene(root, 428, 382));
+        });
+
+
+        return languageMenu;
+    }
+
+    private ListView<StringBuilder> getListView(ResourceBundle bundle) {
+
+        Map<String, String> commandsMap = initializeContainer(bundle);
 
         ObservableList<StringBuilder> commands = FXCollections.observableArrayList(
-                new StringBuilder("Remove greater key"),
-                new StringBuilder("Remove with key"),
-                new StringBuilder("Remove greater"),
-                new StringBuilder("Remove all"),
-                new StringBuilder("Remove lower key"),
-                new StringBuilder("Remove lower object"),
-                new StringBuilder("Add if max"),
-                new StringBuilder("Add if min"),
-                new StringBuilder("Import all from file"),
-                new StringBuilder("Insert new object"));
+                new StringBuilder(bundle.getString("command.remove.greater.key")),
+                new StringBuilder(bundle.getString("command.remove.with.key")),
+                new StringBuilder(bundle.getString("command.remove.greater")),
+                new StringBuilder(bundle.getString("command.remove.all")),
+                new StringBuilder(bundle.getString("command.remove.lower.key")),
+                new StringBuilder(bundle.getString("command.add.if.min")),
+                new StringBuilder(bundle.getString("command.remove.lower.object")),
+                new StringBuilder(bundle.getString("command.import.all.from.file")),
+                new StringBuilder(bundle.getString("command.add.if.max")),
+                new StringBuilder(bundle.getString("command.insert.new.object")));
 
         ListView<StringBuilder> peopleListView = new ListView<>(commands);
 
-//        peopleListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
-        listViewActionListener(peopleListView);
+        listViewActionListener(peopleListView, commandsMap);
 
 
         return peopleListView;
     }
 
-    private void listViewActionListener(ListView<StringBuilder> peopleListView) {
+    private Map<String, String> initializeContainer(ResourceBundle bundle) {
+        ResourceBundle enBundle = ResourceBundle.getBundle("bundles.Locale", new Locale("en", "EN"));
 
-//        peopleListView.setOnMouseClicked(event -> {
-//            if (!peopleListView.getSelectionModel().isEmpty()) {
-//                peopleListView.getSelectionModel().clearSelection();
-//            }
-//        });
+        Map<String, String> commands = new HashMap<>();
+
+        commands.put((bundle.getString("command.remove.greater.key")), enBundle.getString("command.remove.greater.key"));
+        commands.put((bundle.getString("command.remove.with.key")), enBundle.getString("command.remove.with.key"));
+        commands.put((bundle.getString("command.remove.greater")), enBundle.getString("command.remove.greater"));
+        commands.put((bundle.getString("command.remove.all")), enBundle.getString("command.remove.all"));
+        commands.put((bundle.getString("command.remove.lower.key")), enBundle.getString("command.remove.lower.key"));
+        commands.put(bundle.getString("command.remove.lower.object"), enBundle.getString("command.remove.lower.object"));
+        commands.put(bundle.getString("command.add.if.max"), enBundle.getString("command.add.if.max"));
+        commands.put(bundle.getString("command.add.if.min"), enBundle.getString("command.add.if.min"));
+        commands.put(bundle.getString("command.import.all.from.file"), enBundle.getString("command.import.all.from.file"));
+        commands.put(bundle.getString("command.insert.new.object"), enBundle.getString("command.insert.new.object"));
+
+
+        return commands;
+    }
+
+    private void listViewActionListener(ListView<StringBuilder> peopleListView, Map<String, String> commandsMap) {
+
+        peopleListView.setOnMouseClicked(event -> {
+            if (!peopleListView.getSelectionModel().isEmpty()) {
+                peopleListView.getSelectionModel().clearSelection();
+            }
+        });
 
         peopleListView.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends StringBuilder> observable, StringBuilder oldValue, StringBuilder newValue) -> {
             StringBuilder method = null;
             try {
-                method = new StringBuilder(newValue);
+                method = new StringBuilder(commandsMap.get(newValue.toString()));
             } catch (Exception e) {
                 return;
             }

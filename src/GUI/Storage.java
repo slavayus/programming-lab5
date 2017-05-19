@@ -35,7 +35,7 @@ public final class Storage {
     void readFromDB() {
         MessageFromClient messageFromClient;
         try {
-            Map<String, Man> newData = new LinkedHashMap<>();
+            Map<String, Man> newData = new HashMap<>();
             ClientLoad clientLoad = new ClientLoad();
             clientLoad.send(newData, "READ");
             messageFromClient = clientLoad.readData();
@@ -45,10 +45,6 @@ public final class Storage {
         }
     }
 
-
-    public Map<Integer, People> getFamilyOfChild() {
-        return familyOfChild;
-    }
 
     public Map<String, Man> getFamily() {
         return family;

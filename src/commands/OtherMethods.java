@@ -110,6 +110,12 @@ public class OtherMethods {
             clientLoad.send(newData, "LOAD");
             MessageFromClient messageFromClient = clientLoad.readData();
             Storage.getInstanceOf().setFamily(messageFromClient.getDataFromClient());
+
+            if (!clientLoad.getConnection()) {
+                new ShowAlert(Alert.AlertType.ERROR, "Error", messageFromClient.getMsg());
+                return;
+            }
+
             peopleTree.setRoot(MainWindow.getTreeForPeople());
 
             if (!messageFromClient.getClientCollectionState()) {

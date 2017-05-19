@@ -119,6 +119,12 @@ public class AddObjects {
                 clientLoad.send(newData, "ADD_IF_MAX");
             }
             MessageFromClient messageFromClient = clientLoad.readData();
+
+            if (!clientLoad.getConnection()) {
+                new ShowAlert(Alert.AlertType.ERROR, "Error", messageFromClient.getMsg());
+                return;
+            }
+
             Storage.getInstanceOf().setFamily(messageFromClient.getDataFromClient());
             peopleTree.setRoot(MainWindow.getTreeForPeople());
             if (!messageFromClient.getClientCollectionState()) {

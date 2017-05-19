@@ -107,6 +107,12 @@ public class InsertObject {
             ClientLoad clientLoad = new ClientLoad();
             clientLoad.send(newData, "INSERT_NEW_OBJECT");
             MessageFromClient messageFromClient = clientLoad.readData();
+
+            if (!clientLoad.getConnection()) {
+                new ShowAlert(Alert.AlertType.ERROR, "Error", messageFromClient.getMsg());
+                return;
+            }
+
             Storage.getInstanceOf().setFamily(messageFromClient.getDataFromClient());
             peopleTree.setRoot(MainWindow.getTreeForPeople());
 

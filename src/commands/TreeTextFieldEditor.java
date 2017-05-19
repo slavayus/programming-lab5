@@ -59,13 +59,19 @@ public class TreeTextFieldEditor extends TreeCell<Container> {
                         People people = new People(Storage.getInstanceOf().getFamily().get(getItem().getKey()).getName());
                         people.setAge(Storage.getInstanceOf().getFamily().get(getItem().getKey()).getAge());
                         newData.put(getItem().getKey(), people);
-                        if(!newData.values().iterator().next().setName(getItem().getValue())){
+                        if (!newData.values().iterator().next().setName(getItem().getValue())) {
                             new ShowAlert(Alert.AlertType.ERROR, "Error", "Name isn't correct");
                         }
 
                         ClientLoad clientLoad = new ClientLoad();
                         clientLoad.send(newData, "UPDATE");
                         MessageFromClient messageFromClient = clientLoad.readData();
+
+                        if (!clientLoad.getConnection()) {
+                            new ShowAlert(Alert.AlertType.ERROR, "Error", messageFromClient.getMsg());
+                            return;
+                        }
+
                         Storage.getInstanceOf().setFamily(messageFromClient.getDataFromClient());
 
                         if (!messageFromClient.getClientCollectionState()) {
@@ -80,8 +86,8 @@ public class TreeTextFieldEditor extends TreeCell<Container> {
                     } catch (IOException ex) {
                         new ShowAlert(Alert.AlertType.ERROR, "Error", "\nCould not connect to server");
                     }
-                }else{
-                    new ShowAlert(Alert.AlertType.ERROR,"Error", "У тебя тут нет прав");
+                } else {
+                    new ShowAlert(Alert.AlertType.ERROR, "Error", "У тебя тут нет прав");
                     cancelEdit();
                 }
             } else if (e.getCode() == KeyCode.ESCAPE) {

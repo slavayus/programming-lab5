@@ -76,6 +76,12 @@ public class ImportObjects {
             ClientLoad clientLoad = new ClientLoad();
             clientLoad.send(newData, "IMPORT_ALL_FROM_FILE");
             MessageFromClient messageFromClient = clientLoad.readData();
+
+            if (!clientLoad.getConnection()) {
+                new ShowAlert(Alert.AlertType.ERROR, "Error", messageFromClient.getMsg());
+                return;
+            }
+
             Storage.getInstanceOf().setFamily(messageFromClient.getDataFromClient());
             peopleTree.setRoot(MainWindow.getTreeForPeople());
             if (!messageFromClient.getClientCollectionState()) {

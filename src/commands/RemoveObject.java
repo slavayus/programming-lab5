@@ -8,6 +8,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import connectServer.ClientLoad;
 import connectServer.MessageFromClient;
+import javafx.stage.Modality;
 import old.school.Man;
 import old.school.People;
 import javafx.geometry.Insets;
@@ -22,9 +23,9 @@ import javafx.stage.Stage;
 import javafx.scene.control.Alert;
 
 import java.io.IOException;
-import java.net.SocketException;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.PropertyResourceBundle;
 
 /**
  * Created by slavik on 21.02.17.
@@ -44,19 +45,16 @@ public class RemoveObject {
      * @param peopleTree Ожидается TreeView<Container> для изменения содержимого
      * @version 3.0
      */
-    public void removeGreaterKey(TreeView<Container> peopleTree) {
-        if (dataStage == null) {
-            readDataFromTextField("Key");
-        } else {
-            dataStage.toFront();
-        }
+    public void removeGreaterKey(TreeView<Container> peopleTree, PropertyResourceBundle bundle, Stage ownerStage) {
+        readDataFromTextField("Key", bundle, ownerStage);
+
         buttonOK.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ENTER) {
-                removeFromCollectionWithKey(peopleTree, keyTextField, "REMOVE_GREATER_KEY");
+                removeFromCollectionWithKey(peopleTree, keyTextField, "REMOVE_GREATER_KEY", bundle);
             }
         });
 
-        buttonOK.setOnMouseClicked(event -> removeFromCollectionWithKey(peopleTree, keyTextField, "REMOVE_GREATER_KEY"));
+        buttonOK.setOnMouseClicked(event -> removeFromCollectionWithKey(peopleTree, keyTextField, "REMOVE_GREATER_KEY", bundle));
 
     }
 
@@ -68,20 +66,16 @@ public class RemoveObject {
      * @param peopleTree Ожидается TreeView<Container> для изменения содержимого
      * @version 1.0
      */
-    public void removeLowerKey(TreeView<Container> peopleTree) {
-        if (dataStage == null) {
-            readDataFromTextField("Key");
-        } else {
-            dataStage.toFront();
-        }
+    public void removeLowerKey(TreeView<Container> peopleTree, PropertyResourceBundle bundle, Stage ownerStage) {
+        readDataFromTextField("Key", bundle, ownerStage);
 
         buttonOK.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ENTER) {
-                removeFromCollectionWithKey(peopleTree, keyTextField, "REMOVE_LOWER_KEY");
+                removeFromCollectionWithKey(peopleTree, keyTextField, "REMOVE_LOWER_KEY", bundle);
             }
         });
 
-        buttonOK.setOnMouseClicked(event -> removeFromCollectionWithKey(peopleTree, keyTextField, "REMOVE_LOWER_KEY"));
+        buttonOK.setOnMouseClicked(event -> removeFromCollectionWithKey(peopleTree, keyTextField, "REMOVE_LOWER_KEY", bundle));
 
     }
 
@@ -93,20 +87,16 @@ public class RemoveObject {
      * @param peopleTree Ожидается TreeView<Container> для изменения содержимого
      * @version 3.0
      */
-    public void removeWithKey(TreeView<Container> peopleTree) {
-        if (dataStage == null) {
-            readDataFromTextField("Key");
-        } else {
-            dataStage.toFront();
-        }
+    public void removeWithKey(TreeView<Container> peopleTree, PropertyResourceBundle bundle, Stage ownerStage) {
+        readDataFromTextField("Key", bundle, ownerStage);
 
         buttonOK.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ENTER) {
-                removeFromCollectionWithKey(peopleTree, keyTextField, "REMOVE_WITH_KEY");
+                removeFromCollectionWithKey(peopleTree, keyTextField, "REMOVE_WITH_KEY", bundle);
             }
         });
 
-        buttonOK.setOnMouseClicked(event -> removeFromCollectionWithKey(peopleTree, keyTextField, "REMOVE_WITH_KEY"));
+        buttonOK.setOnMouseClicked(event -> removeFromCollectionWithKey(peopleTree, keyTextField, "REMOVE_WITH_KEY", bundle));
 
     }
 
@@ -119,20 +109,16 @@ public class RemoveObject {
      * @version 3.0
      * @since 1.0
      */
-    public void removeGreater(TreeView<Container> peopleTree) {
-        if (dataStage == null) {
-            readDataFromTextField("Object");
-        } else {
-            dataStage.toFront();
-        }
+    public void removeGreater(TreeView<Container> peopleTree, PropertyResourceBundle bundle, Stage ownerStage) {
+        readDataFromTextField("Object", bundle, ownerStage);
 
         buttonOK.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ENTER) {
-                removeFromCollectionWithObject(peopleTree, keyTextField, "REMOVE_GREATER");
+                removeFromCollectionWithObject(peopleTree, keyTextField, "REMOVE_GREATER", bundle);
             }
         });
 
-        buttonOK.setOnMouseClicked(event -> removeFromCollectionWithObject(peopleTree, keyTextField, "REMOVE_GREATER"));
+        buttonOK.setOnMouseClicked(event -> removeFromCollectionWithObject(peopleTree, keyTextField, "REMOVE_GREATER", bundle));
 
     }
 
@@ -144,20 +130,16 @@ public class RemoveObject {
      * @version 3.0
      * @since 1.0
      */
-    public void removeAll(TreeView<Container> peopleTree) {
-        if (dataStage == null) {
-            readDataFromTextField("Object");
-        } else {
-            dataStage.toFront();
-        }
+    public void removeAll(TreeView<Container> peopleTree, PropertyResourceBundle bundle, Stage ownerStage) {
+        readDataFromTextField("Object", bundle, ownerStage);
 
         buttonOK.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ENTER) {
-                removeFromCollectionWithObject(peopleTree, keyTextField, "REMOVE_ALL");
+                removeFromCollectionWithObject(peopleTree, keyTextField, "REMOVE_ALL", bundle);
             }
         });
 
-        buttonOK.setOnMouseClicked(event -> removeFromCollectionWithObject(peopleTree, keyTextField, "REMOVE_ALL"));
+        buttonOK.setOnMouseClicked(event -> removeFromCollectionWithObject(peopleTree, keyTextField, "REMOVE_ALL", bundle));
 
     }
 
@@ -169,32 +151,38 @@ public class RemoveObject {
      * @version 3.0
      * @since 1.0
      */
-    public void removeLowerObject(TreeView<Container> peopleTree) {
-        if (dataStage == null) {
-            readDataFromTextField("Object");
-        } else {
-            dataStage.toFront();
-        }
+    public void removeLowerObject(TreeView<Container> peopleTree, PropertyResourceBundle bundle, Stage ownerStage) {
+        readDataFromTextField("Object", bundle, ownerStage);
 
         buttonOK.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ENTER) {
-                removeFromCollectionWithObject(peopleTree, keyTextField, "REMOVE_LOWER_OBJECT");
+                removeFromCollectionWithObject(peopleTree, keyTextField, "REMOVE_LOWER_OBJECT", bundle);
             }
         });
 
-        buttonOK.setOnMouseClicked(event -> removeFromCollectionWithObject(peopleTree, keyTextField, "REMOVE_LOWER_OBJECT"));
+        buttonOK.setOnMouseClicked(event -> removeFromCollectionWithObject(peopleTree, keyTextField, "REMOVE_LOWER_OBJECT", bundle));
 
     }
 
 
-    private void readDataFromTextField(String element) {
+    private void readDataFromTextField(String element, PropertyResourceBundle bundle, Stage ownerStage) {
         dataStage = new Stage();
+        dataStage.initModality(Modality.WINDOW_MODAL);
+        dataStage.initOwner(ownerStage.getScene().getWindow());
+        Label keyLabel;
+
+        if (element.equals("Key")) {
+            keyLabel = new Label(bundle.getString("message.please.enter.key"));
+            keyTextField.setPromptText(bundle.getString("message.key"));
+            dataStage.setTitle(bundle.getString("message.key"));
+        } else {
+            keyLabel = new Label(bundle.getString("message.please.enter.object"));
+            keyTextField.setPromptText(bundle.getString("message.object"));
+            dataStage.setTitle(bundle.getString("message.object"));
+        }
 
 
-        Label keyLabel = new Label("Please, enter " + element);
         keyLabel.setFont(Font.font("Helvetica", FontWeight.LIGHT, 16));
-
-        keyTextField.setPromptText(element);
 
 
         HBox buttonOKHBox = new HBox(buttonOK);
@@ -203,7 +191,6 @@ public class RemoveObject {
         VBox enterKeyVBox = new VBox(keyLabel, keyTextField, buttonOKHBox);
         enterKeyVBox.setSpacing(5);
 
-        dataStage.setTitle(element);
         dataStage.centerOnScreen();
         dataStage.setScene(new Scene(enterKeyVBox, 300, 90));
         dataStage.toFront();
@@ -213,7 +200,7 @@ public class RemoveObject {
         dataStage.setOnCloseRequest(event -> dataStage = null);
     }
 
-    private void removeFromCollectionWithKey(TreeView<Container> peopleTree, TextField textField, String command) {
+    private void removeFromCollectionWithKey(TreeView<Container> peopleTree, TextField textField, String command, PropertyResourceBundle bundle) {
         this.data = textField.getText();
         dataStage.close();
         dataStage = null;
@@ -229,19 +216,35 @@ public class RemoveObject {
             peopleTree.setRoot(MainWindow.getTreeForPeople());
 
             if (!messageFromClient.getClientCollectionState()) {
-                new ShowAlert(Alert.AlertType.INFORMATION, "Done", "You had an old version of the collection. \nThe collection was updated.");
+                new ShowAlert(Alert.AlertType.INFORMATION,
+                        bundle.getString("message.done"),
+                        bundle.getString("message.you.had.an.old.version.of.the.collection") + "\n" +
+                                bundle.getString("message.the.collection.was.updated"),
+                        bundle);
+
             }
-            new ShowAlert(Alert.AlertType.INFORMATION, "Done", messageFromClient.getMsg() + " \nWas removed " + messageFromClient.getModifiedRow() + " objects");
+            new ShowAlert(Alert.AlertType.INFORMATION,
+                    bundle.getString("message.done"),
+                    messageFromClient.getMsg() + " \n" +
+                            bundle.getString("message.was.removed") +
+                            messageFromClient.getModifiedRow() + " objects",
+                    bundle);
 
         } catch (NullPointerException ex) {
-            new ShowAlert(Alert.AlertType.ERROR, "Error", "Не верно введены данные об объекте");
+            new ShowAlert(Alert.AlertType.ERROR,
+                    bundle.getString("message.error"),
+                    bundle.getString("message.incorrect.object.data.entered"),
+                    bundle);
         } catch (IOException e) {
-            new ShowAlert(Alert.AlertType.ERROR, "Error", "\nCould not connect to server");
+            new ShowAlert(Alert.AlertType.ERROR,
+                    bundle.getString("message.error"), "\n" +
+                    bundle.getString("message.could.not.connect.to.server"),
+                    bundle);
         }
     }
 
 
-    private void removeFromCollectionWithObject(TreeView<Container> peopleTree, TextField textField, String command) {
+    private void removeFromCollectionWithObject(TreeView<Container> peopleTree, TextField textField, String command, PropertyResourceBundle bundle) {
         this.data = textField.getText();
         dataStage.close();
         dataStage = null;
@@ -260,7 +263,10 @@ public class RemoveObject {
             MessageFromClient messageFromClient = clientLoad.readData();
 
             if (!clientLoad.getConnection()) {
-                new ShowAlert(Alert.AlertType.ERROR, "Error", messageFromClient.getMsg());
+                new ShowAlert(Alert.AlertType.ERROR,
+                        bundle.getString("message.error"),
+                        messageFromClient.getMsg(),
+                        bundle);
                 return;
             }
 
@@ -268,16 +274,34 @@ public class RemoveObject {
             peopleTree.setRoot(MainWindow.getTreeForPeople());
 
             if (!messageFromClient.getClientCollectionState()) {
-                new ShowAlert(Alert.AlertType.INFORMATION, "Done", "You had an old version of the collection. \nThe collection was updated.");
+                new ShowAlert(Alert.AlertType.INFORMATION,
+                        bundle.getString("message.done"),
+                        bundle.getString("message.you.had.an.old.version.of.the.collection") + "\n" +
+                                bundle.getString("message.the.collection.was.updated"),
+                        bundle);
             }
-            new ShowAlert(Alert.AlertType.INFORMATION, "Done", messageFromClient.getMsg() + " \nWas removed " + messageFromClient.getModifiedRow() + " objects");
+            new ShowAlert(Alert.AlertType.INFORMATION,
+                    bundle.getString("message.done"),
+                    messageFromClient.getMsg() + " \n" +
+                            bundle.getString("message.was.removed") +
+                            messageFromClient.getModifiedRow() + " objects",
+                    bundle);
 
         } catch (NullPointerException ex) {
-            new ShowAlert(Alert.AlertType.ERROR, "Error", "Не верно введены данные об объекте");
+            new ShowAlert(Alert.AlertType.ERROR,
+                    bundle.getString("message.error"),
+                    bundle.getString("message.incorrect.object.data.entered"),
+                    bundle);
         } catch (JsonSyntaxException ex) {
-            new ShowAlert(Alert.AlertType.ERROR, "Error", "Не удалось распознать объект, \nпроверьте корректность данных");
+            new ShowAlert(Alert.AlertType.ERROR, "Error",
+                    bundle.getString("message.unable.to.recognize.object") + ", \n" +
+                            bundle.getString("message.verify.the.correctness.of.the.data"),
+                    bundle);
         } catch (IOException e) {
-            new ShowAlert(Alert.AlertType.ERROR, "Error", "\nCould not connect to server");
+            new ShowAlert(Alert.AlertType.ERROR,
+                    bundle.getString("message.error"), "\n" +
+                    bundle.getString("message.could.not.connect.to.server"),
+                    bundle);
         }
     }
 

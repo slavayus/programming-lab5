@@ -1,17 +1,13 @@
 package GUI;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import commands.ShowAlert;
 import connectServer.ClientLoad;
 import connectServer.MessageFromClient;
 import javafx.scene.control.Alert;
-import javafx.scene.control.TreeView;
 import old.school.*;
 import deprecated.Place;
 
 import java.io.IOException;
-import java.net.SocketException;
 import java.util.*;
 
 /**
@@ -32,7 +28,7 @@ public final class Storage {
     private Storage() {
     }
 
-    void readFromDB() {
+    void readFromDB(ResourceBundle bundle) {
         MessageFromClient messageFromClient;
         try {
             Map<String, Man> newData = new HashMap<>();
@@ -41,7 +37,7 @@ public final class Storage {
             messageFromClient = clientLoad.readData();
             Storage.getInstanceOf().setFamily(messageFromClient.getDataFromClient());
         } catch (IOException e) {
-            new ShowAlert(Alert.AlertType.ERROR, "Error", "\nCould not connect to server");
+            new ShowAlert(Alert.AlertType.ERROR, bundle.getString("message.error"), "\n"+bundle.getString("message.could.not.connect.to.server"), (PropertyResourceBundle) bundle);
         }
     }
 

@@ -85,7 +85,7 @@ public class RegisterFullVersion implements Registerable {
             if (data.get(0).isEmpty() || data.get(1).isEmpty()) {
                 data.clear();
                 dialog.close();
-                new ShowAlert(Alert.AlertType.ERROR, "Error", "Заполните все поля");
+//                new ShowAlert(Alert.AlertType.ERROR, "Error", "Заполните все поля", bundle);
                 RegisterFullVersion.this.register();
             } else {
 
@@ -101,15 +101,15 @@ public class RegisterFullVersion implements Registerable {
                         case 0:
                             data.clear();
                             dialog.close();
-                            new ShowAlert(Alert.AlertType.INFORMATION, "Error", "\n" + messageFromClient.getMsg());
+//                            new ShowAlert(Alert.AlertType.INFORMATION, "Error", "\n" + messageFromClient.getMsg(), bundle);
                             RegisterFullVersion.this.register();
                             break;
                         case 1:
-                            new ShowAlert(Alert.AlertType.INFORMATION, "Done", "\n" + messageFromClient.getMsg());
+//                            new ShowAlert(Alert.AlertType.INFORMATION, "Done", "\n" + messageFromClient.getMsg(), bundle);
                             break;
                     }
                 } catch (IOException e) {
-                    new ShowAlert(Alert.AlertType.ERROR, "Error", "\nCould not connect to server");
+//                    new ShowAlert(Alert.AlertType.ERROR, "Error", "\nCould not connect to server", bundle);
                 }
             }
         });

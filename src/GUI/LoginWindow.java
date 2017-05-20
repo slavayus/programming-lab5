@@ -140,7 +140,7 @@ public class LoginWindow implements Runnable {
             }
             return false;
         } catch (IOException e) {
-            new ShowAlert(Alert.AlertType.ERROR, "Error", "\nCould not connect to server");
+//            new ShowAlert(Alert.AlertType.ERROR, "Error", "\nCould not connect to server", bundle);
             return false;
         }
     }

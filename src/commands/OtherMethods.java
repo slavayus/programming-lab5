@@ -3,7 +3,6 @@ package commands;
 import GUI.Container;
 import GUI.MainWindow;
 import GUI.Storage;
-import com.google.gson.JsonSyntaxException;
 import connectServer.ClientLoad;
 import connectServer.MessageFromClient;
 import old.school.Man;
@@ -11,12 +10,12 @@ import old.school.People;
 import deprecated.Place;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TreeView;
-import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.net.SocketException;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.PropertyResourceBundle;
+import java.util.ResourceBundle;
 
 /**
  * Created by slavik on 05.04.17.
@@ -29,10 +28,11 @@ public class OtherMethods {
      * Очищает коллекцию.
      *
      * @param peopleTree Ожидается TreeView<Container> для изменения содержимого
+     * @param bundle
      * @version 3.0
      * @since 1.0
      */
-    public void clear(TreeView<Container> peopleTree) {
+    public void clear(TreeView<Container> peopleTree, ResourceBundle bundle) {
 
         try {
             Map<String, Man> newData = new LinkedHashMap<>();
@@ -42,10 +42,17 @@ public class OtherMethods {
             MessageFromClient messageFromClient = clientLoad.readData();
             Storage.getInstanceOf().setFamily(messageFromClient.getDataFromClient());
             peopleTree.setRoot(MainWindow.getTreeForPeople());
-            new ShowAlert(Alert.AlertType.INFORMATION, "Done", messageFromClient.getMsg() + " \nWas removed " + messageFromClient.getModifiedRow() + " objects");
+            new ShowAlert(Alert.AlertType.INFORMATION, bundle.getString("message.done"),
+                    messageFromClient.getMsg() + " \n"+
+                            bundle.getString("message.was.removed") +
+                            messageFromClient.getModifiedRow() + " objects",
+                    (PropertyResourceBundle) bundle);
             peopleTree.setRoot(MainWindow.getTreeForPeople());
         } catch (IOException e) {
-            new ShowAlert(Alert.AlertType.ERROR, "Error", "\nCould not connect to server");
+            new ShowAlert(Alert.AlertType.ERROR,
+                    bundle.getString("message.error"),
+                    "\n"+bundle.getString("message.could.not.connect.to.server"),
+                    (PropertyResourceBundle)bundle);
         }
     }
 
@@ -53,11 +60,15 @@ public class OtherMethods {
      * Команда save.
      * Сохраняет весь объект типа {@link Storage} в файл.
      *
+     * @param bundle
      * @version 3.0
      */
-    public void save() {
+    public void save(ResourceBundle bundle) {
         new Thread(new SaveDataToFile()).start();
-        new ShowAlert(Alert.AlertType.INFORMATION, "Done", "Коллекция 'family' будет сохранена в файл: \nobjects");
+        new ShowAlert(Alert.AlertType.INFORMATION,
+                bundle.getString("message.done"),
+                bundle.getString("message.the.collection.family.will.be.saved.to.a.file") + "\nobjects",
+                (PropertyResourceBundle) bundle);
     }
 
     /**
@@ -65,9 +76,10 @@ public class OtherMethods {
      * Загружает дефолтные объекты типа {@link Storage} данные в коллекцию.
      *
      * @param peopleTree Ожидается TreeView<Container> для изменения содержимого
+     * @param bundle
      * @version 3.0
      */
-    public void loadDefaultObjects(TreeView<Container> peopleTree) {
+    public void loadDefaultObjects(TreeView<Container> peopleTree, ResourceBundle bundle) {
         Map<String, Man> newData = new LinkedHashMap<>();
 
         People x = new People();
@@ -112,21 +124,34 @@ public class OtherMethods {
             Storage.getInstanceOf().setFamily(messageFromClient.getDataFromClient());
 
             if (!clientLoad.getConnection()) {
-                new ShowAlert(Alert.AlertType.ERROR, "Error", messageFromClient.getMsg());
+                new ShowAlert(Alert.AlertType.ERROR,
+                        bundle.getString("message.error"),
+                        messageFromClient.getMsg(),
+                        (PropertyResourceBundle)bundle);
                 return;
             }
 
             peopleTree.setRoot(MainWindow.getTreeForPeople());
 
             if (!messageFromClient.getClientCollectionState()) {
-                new ShowAlert(Alert.AlertType.INFORMATION, "Done", "You had an old version of the collection. \nThe collection was updated.");
+                new ShowAlert(Alert.AlertType.INFORMATION,
+                        bundle.getString("message.done"),
+                        bundle.getString("message.you.had.an.old.version.of.the.collection") + "\n" +
+                                bundle.getString("message.the.collection.was.updated"),
+                        (PropertyResourceBundle) bundle);
             }
 
-            new ShowAlert(Alert.AlertType.INFORMATION, "Done", "\n" + messageFromClient.getMsg() + "\n");
+            new ShowAlert(Alert.AlertType.INFORMATION,
+                    bundle.getString("message.done"),
+                    "\n" + messageFromClient.getMsg() + "\n",
+                    (PropertyResourceBundle)bundle);
 
             peopleTree.setRoot(MainWindow.getTreeForPeople());
         } catch (IOException e) {
-            new ShowAlert(Alert.AlertType.ERROR, "Error", "\nCould not connect to server");
+            new ShowAlert(Alert.AlertType.ERROR,
+                    bundle.getString("message.error"),
+                    "\n"+bundle.getString("message.could.not.connect.to.server"),
+                    (PropertyResourceBundle)bundle);
         }
     }
 }

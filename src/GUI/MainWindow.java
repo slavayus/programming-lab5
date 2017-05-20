@@ -41,7 +41,10 @@ public class MainWindow extends TreeCell<Container> {
     }
 
     public void showWindow() {
-        Storage.getInstanceOf().readFromDB();
+        ResourceBundle defaultBundle = ResourceBundle.getBundle("bundles.Locale");
+
+
+        Storage.getInstanceOf().readFromDB(defaultBundle);
 
         peopleTree = new TreeView<>(getTreeForPeople());
         if (version == Version.FULL) {
@@ -49,13 +52,11 @@ public class MainWindow extends TreeCell<Container> {
         }
 
 
-        peopleTree.setCellFactory(TreeTextFieldEditor::new);
+        peopleTree.setCellFactory(tree -> new TreeTextFieldEditor(tree, defaultBundle));
 
         peopleTree.setPrefWidth(10000);
         peopleTree.setStyle("-fx-background-color: #000000");
 
-
-        ResourceBundle defaultBundle = ResourceBundle.getBundle("bundles.Locale");
 
         HBox listViewHBox = new HBox(getAnchorPaneForListView(defaultBundle), peopleTree);
 
@@ -233,19 +234,19 @@ public class MainWindow extends TreeCell<Container> {
         aboutMenu.getItems().add(saveMenuItem);
 
         //EditSaveMenuListener
-        saveMenuItem.setOnAction((ActionEvent event) -> otherMethods.save());
+        saveMenuItem.setOnAction((ActionEvent event) -> otherMethods.save(bundle));
 
         MenuItem clearMenuItem = new MenuItem(bundle.getString("menu.edit.clear"));
         aboutMenu.getItems().add(clearMenuItem);
 
         //EditClearMenuListener
-        clearMenuItem.setOnAction((ActionEvent event) -> otherMethods.clear(peopleTree));
+        clearMenuItem.setOnAction((ActionEvent event) -> otherMethods.clear(peopleTree, bundle));
 
         MenuItem loadMenuItem = new MenuItem(bundle.getString("menu.edit.load"));
         aboutMenu.getItems().add(loadMenuItem);
 
         //EditSaveMenuListener
-        loadMenuItem.setOnAction((ActionEvent event) -> otherMethods.loadDefaultObjects(peopleTree));
+        loadMenuItem.setOnAction((ActionEvent event) -> otherMethods.loadDefaultObjects(peopleTree, bundle));
 
         return aboutMenu;
     }
@@ -262,10 +263,9 @@ public class MainWindow extends TreeCell<Container> {
 
             ResourceBundle resourceBundle = ResourceBundle.getBundle("bundles.Locale", new Locale("en", "EN"));
 
+            //mainWindow
             HBox listViewHBox = new HBox(getAnchorPaneForListView(resourceBundle), peopleTree);
-
             VBox root = new VBox(getMenuBar(resourceBundle), listViewHBox);
-
             mainWindow.setTitle(resourceBundle.getString("system.name"));
             mainWindow.setScene(new Scene(root, 428, 382));
         });
@@ -278,11 +278,9 @@ public class MainWindow extends TreeCell<Container> {
 
             ResourceBundle resourceBundle = ResourceBundle.getBundle("bundles.Locale", new Locale("ru", "RU"));
 
+            //mainWindow
             HBox listViewHBox = new HBox(getAnchorPaneForListView(resourceBundle), peopleTree);
-
-
             VBox root = new VBox(getMenuBar(resourceBundle), listViewHBox);
-
             mainWindow.setTitle(resourceBundle.getString("system.name"));
             mainWindow.setScene(new Scene(root, 428, 382));
         });
@@ -293,12 +291,10 @@ public class MainWindow extends TreeCell<Container> {
         languageMenu.getItems().add(mkMenuItem);
         mkMenuItem.setOnAction((ActionEvent event) -> {
 
+            //mainWindow
             ResourceBundle resourceBundle = ResourceBundle.getBundle("bundles.Locale", new Locale("mk", "MK"));
-
             HBox listViewHBox = new HBox(getAnchorPaneForListView(resourceBundle), peopleTree);
-
             VBox root = new VBox(getMenuBar(resourceBundle), listViewHBox);
-
             mainWindow.setTitle(resourceBundle.getString("system.name"));
             mainWindow.setScene(new Scene(root, 428, 382));
         });
@@ -309,14 +305,14 @@ public class MainWindow extends TreeCell<Container> {
         languageMenu.getItems().add(bgMenuItem);
         bgMenuItem.setOnAction((ActionEvent event) -> {
 
+            //mainWindow
             ResourceBundle resourceBundle = ResourceBundle.getBundle("bundles.Locale", new Locale("bg", "BG"));
-
             HBox listViewHBox = new HBox(getAnchorPaneForListView(resourceBundle), peopleTree);
-
             VBox root = new VBox(getMenuBar(resourceBundle), listViewHBox);
-
             mainWindow.setTitle(resourceBundle.getString("system.name"));
             mainWindow.setScene(new Scene(root, 428, 382));
+
+
         });
 
 
@@ -342,7 +338,7 @@ public class MainWindow extends TreeCell<Container> {
         ListView<StringBuilder> peopleListView = new ListView<>(commands);
 
 
-        listViewActionListener(peopleListView, commandsMap);
+        listViewActionListener(peopleListView, commandsMap, bundle);
 
 
         return peopleListView;
@@ -368,7 +364,7 @@ public class MainWindow extends TreeCell<Container> {
         return commands;
     }
 
-    private void listViewActionListener(ListView<StringBuilder> peopleListView, Map<String, String> commandsMap) {
+    private void listViewActionListener(ListView<StringBuilder> peopleListView, Map<String, String> commandsMap, ResourceBundle bundle) {
 
         peopleListView.setOnMouseClicked(event -> {
             if (!peopleListView.getSelectionModel().isEmpty()) {
@@ -403,7 +399,7 @@ public class MainWindow extends TreeCell<Container> {
             switch (className) {
                 case "Remove": {
                     try {
-                        RemoveObject.class.getMethod(String.valueOf(method), peopleTree.getClass()).invoke(removeObject, peopleTree);
+                        RemoveObject.class.getMethod(String.valueOf(method), peopleTree.getClass(), bundle.getClass(), mainWindow.getClass()).invoke(removeObject, peopleTree, bundle, mainWindow);
                     } catch (NoSuchMethodException e) {
                         System.out.println("Method not found");
                     } catch (IllegalAccessException | InvocationTargetException e) {
@@ -413,7 +409,7 @@ public class MainWindow extends TreeCell<Container> {
                 }
                 case "Add": {
                     try {
-                        AddObjects.class.getMethod(String.valueOf(method), peopleTree.getClass()).invoke(addObjects, peopleTree);
+                        AddObjects.class.getMethod(String.valueOf(method), peopleTree.getClass(), bundle.getClass(), mainWindow.getClass()).invoke(addObjects, peopleTree, bundle, mainWindow);
                     } catch (NoSuchMethodException e) {
                         System.out.println("Method not found");
                     } catch (IllegalAccessException | InvocationTargetException e) {
@@ -422,11 +418,11 @@ public class MainWindow extends TreeCell<Container> {
                     break;
                 }
                 case "Import": {
-                    importObjects.importAllFromFile(peopleTree);
+                    importObjects.importAllFromFile(peopleTree, bundle, mainWindow);
                     break;
                 }
                 case "Insert": {
-                    insertObject.insertNewObject(peopleTree);
+                    insertObject.insertNewObject(peopleTree, bundle, mainWindow);
                     break;
                 }
             }

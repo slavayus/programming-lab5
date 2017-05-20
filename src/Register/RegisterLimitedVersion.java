@@ -1,8 +1,5 @@
 package Register;
 
-import GUI.MainWindow;
-import GUI.Storage;
-import com.google.gson.JsonSyntaxException;
 import commands.ShowAlert;
 import connectServer.ClientLoad;
 import connectServer.MessageFromClient;
@@ -13,12 +10,10 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.util.Pair;
 import old.school.Man;
-import old.school.People;
 import old.school.User;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.function.Consumer;
 
 /**
  * Created by slavik on 13.04.17.
@@ -90,7 +85,7 @@ public class RegisterLimitedVersion  implements Registerable {
             if (data.get(0).isEmpty() || data.get(1).isEmpty()) {
                 data.clear();
                 dialog.close();
-                new ShowAlert(Alert.AlertType.ERROR, "Error", "Заполните все поля");
+//                new ShowAlert(Alert.AlertType.ERROR, "Error", "Заполните все поля", bundle);
                 RegisterLimitedVersion.this.register();
             } else {
 
@@ -106,15 +101,15 @@ public class RegisterLimitedVersion  implements Registerable {
                         case 0:
                             data.clear();
                             dialog.close();
-                            new ShowAlert(Alert.AlertType.INFORMATION, "Error", "\n" + messageFromClient.getMsg());
+//                            new ShowAlert(Alert.AlertType.INFORMATION, "Error", "\n" + messageFromClient.getMsg(), bundle);
                             RegisterLimitedVersion.this.register();
                             break;
                         case 1:
-                            new ShowAlert(Alert.AlertType.INFORMATION, "Done", "\n" + messageFromClient.getMsg());
+//                            new ShowAlert(Alert.AlertType.INFORMATION, "Done", "\n" + messageFromClient.getMsg(), bundle);
                             break;
                     }
                 } catch (IOException e) {
-                    new ShowAlert(Alert.AlertType.ERROR, "Error", "\nCould not connect to server");
+//                    new ShowAlert(Alert.AlertType.ERROR, "Error", "\nCould not connect to server", bundle);
                 }
             }
         });
